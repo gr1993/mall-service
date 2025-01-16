@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{::title},~{::main})}"
+      lang="ko"
+>
+<head>
+  <title>관리자 - 상품 관리</title>
+</head>
+<body>
+<main>
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">상품 관리</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item">상품</li>
+      <li class="breadcrumb-item active">상품 관리</li>
+    </ol>
+    <div class="card mb-4">
+      <div class="card-body">
+        <form>
+          <div class="mb-3 row">
+            <label for="productNum" class="col-sm-2 col-form-label">상품번호</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="productNum">
+            </div>
+          </div>
+          <div class="row">
+            <label for="productName" class="col-sm-2 col-form-label">상품명</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="productName">
+            </div>
+            <div class="col-sm-2">
+              <button class="btn btn-primary" id="btnNavbarSearch" type="button">
+                <i class="fas fa-search"></i> 검색
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        상품 목록
+      </div>
+      <div class="card-body">
+        <table id="productList">
+
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/mallGrid.js"></script>
+  <script>
+    var mallGrid;
+    var dataTable;
+
+    $(function() {
+      mallGrid = new MallGrid('simple', 'productList');
+
+      mallGrid.addColumns([
+        { label : "상품명", name : "name" },
+        { label : "위치", name : "Position" },
+        { label : "Office", name : "Office" },
+        { label : "Age", name : "Age" },
+        { label : "Start date", name : "Start date" },
+        { label : "Salary", name : "Salary" },
+      ]);
+
+      mallGrid.addRows(tempData);
+      mallGrid.setPageInfo(12, 5 ,200);
+
+    });
+
+    var tempData = [
+      {
+        "Name": "Tiger Nixon",
+        "Position": "System Architect",
+        "Office": "Edinburgh",
+        "Age": 61,
+        "Start date": "2011/04/25",
+        "Salary": "$320,800"
+      },
+      {
+        "Name": "Garrett Winters",
+        "Position": "Accountant",
+        "Office": "Tokyo",
+        "Age": 63,
+        "Start date": "2011/07/25",
+        "Salary": "$170,750"
+      },
+      {
+        "Name": "Ashton Cox",
+        "Position": "Junior Technical Author",
+        "Office": "San Francisco",
+        "Age": 66,
+        "Start date": "2009/01/12",
+        "Salary": "$86,000"
+      },
+      {
+        "Name": "Cedric Kelly",
+        "Position": "Senior Javascript Developer",
+        "Office": "Edinburgh",
+        "Age": 22,
+        "Start date": "2012/03/29",
+        "Salary": "$433,060"
+      },
+      {
+        "Name": "Airi Satou",
+        "Position": "Accountant",
+        "Office": "Tokyo",
+        "Age": 33,
+        "Start date": "2008/11/28",
+        "Salary": "$162,700"
+      },
+      {
+        "Name": "Brielle Williamson",
+        "Position": "Integration Specialist",
+        "Office": "New York",
+        "Age": 61,
+        "Start date": "2012/12/02",
+        "Salary": "$372,000"
+      },
+      {
+        "Name": "Herrod Chandler",
+        "Position": "Sales Assistant",
+        "Office": "San Francisco",
+        "Age": 59,
+        "Start date": "2012/08/06",
+        "Salary": "$137,500"
+      },
+      {
+        "Name": "Rhona Davidson",
+        "Position": "Integration Specialist",
+        "Office": "Tokyo",
+        "Age": 55,
+        "Start date": "2010/10/14",
+        "Salary": "$327,900"
+      },
+      {
+        "Name": "Colleen Hurst",
+        "Position": "Javascript Developer",
+        "Office": "San Francisco",
+        "Age": 39,
+        "Start date": "2009/09/15",
+        "Salary": "$205,500"
+      },
+      {
+        "Name": "Sonya Frost",
+        "Position": "Software Engineer",
+        "Office": "Edinburgh",
+        "Age": 23,
+        "Start date": "2008/12/13",
+        "Salary": "$103,600"
+      },
+    ]
+  </script>
+</main>
+</body>
+</html>
