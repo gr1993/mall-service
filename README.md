@@ -8,7 +8,7 @@ Spring Boot를 이용한 쇼핑몰 사이드 프로젝트
 * Spring Security
 * JPA + Querydsl
 * mysql connector
-* Jasypt : 설정 파일 보안 적용
+* Jasypt : 설정 파일 보안 적용 (jasyptKey : mypasswordkey)
 
 
 ## 프론트엔드 기술
@@ -16,6 +16,10 @@ Spring Boot를 이용한 쇼핑몰 사이드 프로젝트
 * Thymeleaf
 * Bootstrap 5
 * JQuery 3.7.1
+* grid 라이브러리
+	* simple-datatables
+	* jqGrid
+	* Grid.js
 
 
 ## 시연 영상
