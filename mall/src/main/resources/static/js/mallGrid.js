@@ -1,18 +1,24 @@
 
 /**
+* 지원 그리드 라이브러리
 * simple : simple-datatables (서버 사이드 페이지네이션 지원하지 않음)
 *          무조건 한번에 데이터를 다 불러와야 한다.
+* jqGrid : jqGrid
+* gridJs : Grid.js
 */
 class MallGrid {
-    constructor(type, id) {
+    constructor(type, options) {
         this.type = type;
-        this.id = id;
         this.grid = null;
 
         if (type === 'simple') {
-            this.grid = new simpleDatatables.DataTable('#' + id, {
+            this.grid = new simpleDatatables.DataTable('#' + options.id, {
                 searchable: false //검색 박스 제거
             });
+        }
+        else if (type === 'jqGrid') {
+            this.grid = $('#' + options.id);
+            this.grid.jqGrid(options);
         }
     }
 
@@ -30,6 +36,8 @@ class MallGrid {
         if (this.type === 'simple') {
             // 배열로 입력해야 하며 컬럼 순서대로 row 추가
             this.grid.rows.add(Object.values(newRow));
+        } else if (this.type === 'jqGrid') {
+            this.grid.jqGrid('addRowData', newRow.id, newRow);
         }
     }
 
@@ -61,10 +69,5 @@ class MallGrid {
         return this.grid.options.perPage;
     }
 
-    onPage(callback) {
-        const button = document.getElementsByClassName('datatable-pagination-list-item');
-        button.addEventListener("click", function() {
-            callback(this.grid._currentPage);
-        });
-    }
+
 }
