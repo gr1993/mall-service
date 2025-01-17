@@ -5,6 +5,7 @@
 *          무조건 한번에 데이터를 다 불러와야 한다.
 * jqGrid : jqGrid
 * gridJs : Grid.js
+*          MallGrid 클래스에서 구현안하고 주문 관리 페이지 참고할 것
 */
 class MallGrid {
     constructor(type, options) {

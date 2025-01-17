@@ -8,7 +8,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>관리자</title>
+    <title th:replace="${title}">관리자</title>
 
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/styles.css" />
@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/redmond/jquery-ui.css" type="text/css" />
     <!-- jqGrid CSS -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/jqgrid/4.6.0/css/ui.jqgrid.css" type="text/css" />
+    <!-- Grid CSS -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
 </head>
 <body class="sb-nav-fixed">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -31,7 +33,8 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/jqgrid/4.6.0/i18n/grid.locale-kr.js" /></script>
     <!-- The atual jqGrid code -->
     <script type="text/javascript" src="//cdn.jsdelivr.net/jqgrid/4.6.0/jquery.jqGrid.src.js" /></script>
-
+    <!-- Grid.js -->
+    <script src="https://unpkg.com/gridjs-jquery/dist/gridjs.production.min.js"></script>
 
   <div id="layoutSidenav">
     <nav th:replace="~{admin/layout/topNav.html :: nav}"></nav>

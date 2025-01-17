@@ -1,11 +1,9 @@
 package com.park.mall.web.admin.product;
 
-import com.park.mall.domain.product.Product;
 import com.park.mall.service.product.ProductService;
-import com.park.mall.web.admin.common.JqGridInfo;
 import com.park.mall.service.product.dto.AdminProductSearch;
+import com.park.mall.web.admin.common.JqGridInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,11 +13,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 괸리자 > 상품 관리
+ * 관리자 > 상품 관리
  */
 @Controller
 @RequestMapping("/admin")

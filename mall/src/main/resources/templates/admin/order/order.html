@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{::title},~{::main})}"
+      lang="ko"
+>
+<head>
+    <title>관리자 - 주문 관리</title>
+</head>
+<body>
+<main>
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">주문 관리</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item">주문</li>
+            <li class="breadcrumb-item active">주문 관리</li>
+        </ol>
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="searchForm">
+                    <div class="mb-3 row">
+                        <label for="productId" class="col-sm-2 col-form-label">상품번호</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" id="productId" name="productId">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="productName" class="col-sm-2 col-form-label">상품명</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="productName" name="productName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-sm-2 col-form-label">가격</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="minPrice" name="minPrice">
+                        </div>
+                        ~
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="maxPrice" name="maxPrice">
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-primary" id="btnNavbarSearch" type="button" onclick="searchOrderList();">
+                                <i class="fas fa-search"></i> 검색
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                상품 목록
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div id="orderList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var mallGrid;
+
+        $(function() {
+            mallGrid = $("div#orderList").Grid({
+              columns: [
+                {id: "id", name: "상품 번호", width: "50px"},
+                {id: "name", name: "상품명", width: "150px"},
+                {id: "price", name: "가격", width: "100px"},
+                {id: "createdDtm", name: "생성일", width: "200px"},
+                {id: "createId", name: "생성자", width: "100px"},
+              ],
+              data: [],
+              sort: true,
+              language: {
+                search: {
+                  'placeholder': '🔍 검색중...'
+                },
+                pagination: {
+                  'previous': '⬅️',
+                  'next': '➡️',
+                  'showing': '😃 번호',
+                  'to': '~',
+                  'of': ', 총',
+                  'results': () => '건'
+                },
+                loading: 'Loading...',
+                noRecordsFound: '검색 결과가 존재하지 않습니다.',
+                error: '검색 중 오류가 발생하였습니다.'
+              }
+            });
+        });
+
+        // 조회
+        function searchOrderList() {
+            var formData = $('#searchForm').serialize();
+
+            mallGrid.updateConfig({
+              server: {
+                url: '/admin/product/list?' + formData,
+                then: res => res.rows.map(row => [row.id, row.name, row.price, row.createdDtm, row.createId]),
+                total: res => res.records,
+              },
+              pagination: {
+                limit: 5,
+                server: {
+                  url: (prev, page, limit) => `${prev}&rows=${limit}&page=${page + 1}`
+                }
+              },
+              sort: {
+                server: {
+                  url: (prev, columns) => {
+                   if (!columns.length) return prev + '&sidx=id&sord=asc';
+
+                   const col = columns[0];
+                   const dir = col.direction === 1 ? 'asc' : 'desc';
+                   let colName = ['id', 'name', 'price', 'createdDtm', 'createId'][col.index];
+
+                   return `${prev}&sidx=${colName}&sord=${dir}`;
+                  }
+                }
+              }
+            }).forceRender();
+        }
+    </script>
+</main>
+</body>
+</html>
