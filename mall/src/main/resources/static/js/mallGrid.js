@@ -69,5 +69,10 @@ class MallGrid {
         return this.grid.options.perPage;
     }
 
-
+    loadGrid(option) {
+        if (this.type === 'jqGrid') {
+            this.grid.jqGrid('setGridParam', option)
+                .trigger("reloadGrid");
+        }
+    }
 }

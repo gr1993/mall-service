@@ -16,20 +16,30 @@
     </ol>
     <div class="card mb-4">
       <div class="card-body">
-        <form>
+        <form id="searchForm">
           <div class="mb-3 row">
-            <label for="productNum" class="col-sm-2 col-form-label">상품번호</label>
+            <label for="productId" class="col-sm-2 col-form-label">상품번호</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" id="productNum">
+              <input type="text" class="form-control" id="productId" name="productId">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="productName" class="col-sm-2 col-form-label">상품명</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="productName" name="productName">
             </div>
           </div>
           <div class="row">
-            <label for="productName" class="col-sm-2 col-form-label">상품명</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" id="productName">
+            <label class="col-sm-2 col-form-label">가격</label>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="minPrice" name="minPrice">
+            </div>
+            ~
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="maxPrice" name="maxPrice">
             </div>
             <div class="col-sm-2">
-              <button class="btn btn-primary" id="btnNavbarSearch" type="button">
+              <button class="btn btn-primary" id="btnNavbarSearch" type="button" onclick="searchProductList();">
                 <i class="fas fa-search"></i> 검색
               </button>
             </div>
@@ -56,27 +66,42 @@
     $(function() {
       mallGrid = new MallGrid('jqGrid', {
         id: 'productList',  // grid id
-		datatype: "json",   // 받아올 데이터 타입
-		colNames:['날짜', '아이디', '이름','상품','가격','합계'],
-		colModel:[
-			{name:'Name', index:'date', width:90, align: "center"},
-			{name:'Position', index:'name', width:100 , align: "center"},
-			{name:'Office', index:'id', width:150, align: "center" },
-			{name:'Age', index:'product', width:80, align: "center"},
-			{name:'Start date', index:'amount', width:80, align: "center"},
-			{name:'Salary', index:'total', width:80, align: "center"}
+		colNames:['상품 번호', '상품명', '가격', '생성일', '생성자'],
+		colModel:[ // index : 컬럼 정렬 시 전송값 (index 속성을 설정하지 않으면 name 속성값 적용)
+			{name:'id', index:'id', width:50, align: "center"},
+			{name:'name', index:'name', width:150 , align: "center"},
+			{name:'price', index:'price', width:100, align: "center"},
+			{
+			  name:'createdDtm', index:'createdDtm', width:200, align: "center",
+			  formatter: 'date',
+			  formatoptions: {srcformat: "ISO8601Long", newformat: 'Y-m-d H:i:s'},
+			},
+			{name:'createId', index:'createId', width:100, align: "center"},
 		],
 		autowidth: true,   // true인 경우 화면 너비에 맞춤
 		rownumbers : true, // 일련번호 컬럼 추가
-		multiselect:true,  // 선택박스 컬럼 추가
-		pager:'#pager',    // pager로 사용항 div의 id
+		multiselect: true, // 선택박스 컬럼 추가
+		pager: '#pager',   // pager로 사용항 div의 id
 		rowNum: 10,        // 초기 페이지당 출력 갯수
 		rowList: [10, 20, 50],  //페이지 표출 갯수 리스트
 		sortname: 'id',    // 초기 정렬 데이터명
 		sortorder: 'asc',
-		height: 250,
+		height: 300,
+		viewrecords: true, // 총 레코드 수 표시
 	  });
     });
+
+    // 조회
+    function searchProductList() {
+      var formData = $('#searchForm').serialize();
+
+      mallGrid.loadGrid({
+        url: '/admin/product/list?' + formData,
+		datatype: "json",   // 응답 데이터 형식
+		mtype: 'GET',
+		page: 1,
+      });
+    }
   </script>
 </main>
 </body>

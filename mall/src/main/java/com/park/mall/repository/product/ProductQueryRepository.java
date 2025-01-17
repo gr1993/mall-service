@@ -2,7 +2,11 @@ package com.park.mall.repository.product;
 
 import com.park.mall.domain.product.Product;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -38,15 +42,26 @@ public class ProductQueryRepository {
     }
 
     public Page<Product> searchPage(ProductSearchCondition condition, Pageable pageable) {
-        List<Product> fetch = query
+        JPAQuery<Product> fetchQuery = query
                 .select(product)
                 .from(product)
                 .where(
                         conditions(condition)
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+                .limit(pageable.getPageSize());
+
+        pageable.getSort().stream().forEach(sort -> {
+            Order order = sort.isAscending() ? Order.ASC : Order.DESC;
+            String property = sort.getProperty();
+            if ("createId".equals(property) || "createdDtm".equals(property)) {
+                property = "createInfo." + property;
+            }
+
+            Path<Object> target = Expressions.path(Object.class, product, property);
+            OrderSpecifier<?> orderSpecifier = new OrderSpecifier(order, target);
+            fetchQuery.orderBy(orderSpecifier);
+        });
 
         JPAQuery<Long> count = query
                 .select(product.count())
@@ -55,7 +70,7 @@ public class ProductQueryRepository {
                         conditions(condition)
                 );
 
-        return PageableExecutionUtils.getPage(fetch, pageable, count::fetchOne);
+        return PageableExecutionUtils.getPage(fetchQuery.fetch(), pageable, count::fetchOne);
     }
 
     private BooleanExpression[] conditions (ProductSearchCondition condition) {
