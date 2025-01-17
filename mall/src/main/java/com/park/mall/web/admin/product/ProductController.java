@@ -44,4 +44,9 @@ public class ProductController {
 
         return productService.searchProductForAdmin(condition, pageable);
     }
+
+    @GetMapping("/product/register")
+    public String productRegisterView() {
+        return "admin/product/register";
+    }
 }
