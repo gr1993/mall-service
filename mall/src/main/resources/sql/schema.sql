@@ -15,7 +15,9 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `parksinsa`.`product_img` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `product_id` INT NOT NULL,
+  `main_img_name` VARCHAR(200) NULL,
   `main_img_path` VARCHAR(1024) NULL,
+  `desc_img_name` VARCHAR(200) NULL,
   `desc_img_path` VARCHAR(1024) NULL,
   `created_dtm` DATETIME NULL,
   `create_id` VARCHAR(45) NULL,
