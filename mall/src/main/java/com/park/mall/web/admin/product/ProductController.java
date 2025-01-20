@@ -3,15 +3,16 @@ package com.park.mall.web.admin.product;
 import com.park.mall.service.product.ProductService;
 import com.park.mall.service.product.dto.AdminProductSearch;
 import com.park.mall.web.admin.common.JqGridInfo;
+import com.park.mall.web.admin.product.dto.ProductRegister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -48,5 +49,24 @@ public class ProductController {
     @GetMapping("/product/register")
     public String productRegisterView() {
         return "admin/product/register";
+    }
+
+    @PostMapping("/product/register")
+    @ResponseBody
+    public ResponseEntity<?> productRegister(
+            @Validated @ModelAttribute ProductRegister productRegister,
+            BindingResult bindingResult
+            ) {
+        if (bindingResult.hasErrors()) {
+            // 에러 메시지 리스트 반환
+            return ResponseEntity.badRequest().body(
+                    bindingResult.getFieldErrors()
+                            .stream()
+                            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                            .toList()
+            );
+        }
+
+        return ResponseEntity.ok().build();
     }
 }

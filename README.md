@@ -9,6 +9,7 @@ Spring Boot를 이용한 쇼핑몰 사이드 프로젝트
 * JPA + Querydsl
 * mysql connector
 * Jasypt : 설정 파일 보안 적용 (jasyptKey : mypasswordkey)
+* validation : hibernate.validator
 
 
 ## 프론트엔드 기술
