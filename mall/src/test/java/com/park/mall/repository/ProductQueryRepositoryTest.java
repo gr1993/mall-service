@@ -4,9 +4,7 @@ import com.park.mall.domain.product.Product;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.repository.product.ProductQueryRepository;
 import com.park.mall.repository.product.ProductSearchCondition;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -83,6 +81,11 @@ public class ProductQueryRepositoryTest {
         long total = productPage.getTotalElements();
         Assertions.assertTrue(total >= setupSize);
         Assertions.assertEquals(10, productPage.getContent().size());
+    }
+
+    @AfterEach
+    public void clear() {
+        productJpaRepository.deleteAll(productList);
     }
 
     private Product addProduct(String name, Integer price) {

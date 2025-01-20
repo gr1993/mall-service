@@ -2,12 +2,15 @@ package com.park.mall.repository;
 
 import com.park.mall.domain.product.Product;
 import com.park.mall.repository.product.ProductJpaRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -16,6 +19,7 @@ public class ProductJpaRepositoryTest {
     @Autowired
     private ProductJpaRepository productJpaRepository;
 
+    private List<Product> productList = new ArrayList<>();
     private Product newProduct;
 
     @BeforeEach
@@ -25,6 +29,7 @@ public class ProductJpaRepositoryTest {
         newProduct.setPrice(1000);
         newProduct.getCreateInfo().setCreateId("manager");
         newProduct.getUpdateInfo().setModifyId("owner");
+        productList.add(newProduct);
     }
 
     @Test
@@ -65,6 +70,11 @@ public class ProductJpaRepositoryTest {
         //then
         Optional<Product> oProduct = productJpaRepository.findById(newProduct.getId());
         Assertions.assertTrue(oProduct.isEmpty());
+    }
+
+    @AfterEach
+    public void clear() {
+        productJpaRepository.deleteAll(productList);
     }
 
     private Product selectProductById(Long id) {
