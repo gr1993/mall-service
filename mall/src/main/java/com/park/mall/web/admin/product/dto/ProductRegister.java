@@ -1,5 +1,7 @@
 package com.park.mall.web.admin.product.dto;
 
+import com.park.mall.domain.product.Product;
+import com.park.mall.domain.product.ProductImg;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,4 +25,16 @@ public class ProductRegister {
     private Integer price;
 
     private String descImg;
+
+    public Product convertToProduct() {
+        Product product = new Product();
+        product.setName(this.name);
+        product.setPrice(this.price);
+
+        ProductImg productImg = new ProductImg();
+        productImg.setMainImgName(this.mainImg);
+        productImg.setDescImgName(this.descImg);
+        product.getProductImgs().add(productImg);
+        return product;
+    }
 }

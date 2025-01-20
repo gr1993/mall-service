@@ -1,16 +1,20 @@
 package com.park.mall.service.product;
 
 import com.park.mall.domain.product.Product;
+import com.park.mall.domain.product.ProductImg;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.repository.product.ProductQueryRepository;
 import com.park.mall.repository.product.ProductSearchCondition;
+import com.park.mall.service.file.FileService;
 import com.park.mall.service.product.dto.AdminProductInfo;
 import com.park.mall.service.product.dto.AdminProductSearch;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +28,23 @@ public class ProductService {
 
     private final ProductJpaRepository productJpaRepository;
     private final ProductQueryRepository productQueryRepository;
+
+    @Autowired
+    private FileService fileService;
+
+    public void addProduct(Product product) {
+        ProductImg productImg = product.getProductImgs().get(0);
+
+        //임시 경로에서 실제 업로드 처리하기
+        String mainImgPath = fileService.uploadFromTemp(productImg.getMainImgName());
+        productImg.setMainImgPath(mainImgPath);
+        if (StringUtils.hasText(productImg.getDescImgName())) {
+            String descImgPath = fileService.uploadFromTemp(productImg.getDescImgName());
+            productImg.setDescImgPath(descImgPath);
+        }
+
+        productJpaRepository.save(product);
+    }
 
     public Map<String, Object> searchProductForAdmin(AdminProductSearch condition, Pageable pageable) {
         ProductSearchCondition searchCondition = new ProductSearchCondition();

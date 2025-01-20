@@ -72,7 +72,7 @@ public class ProductQueryRepositoryTest {
     @Test
     void searchPage() {
         //given
-        Pageable pageable = PageRequest.of(1, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         //when
         Page<Product> productPage = productQueryRepository.searchPage(new ProductSearchCondition(), pageable);

@@ -48,7 +48,7 @@ public class FileService {
      * 임시 업로드에서 실제 경로로 업로드 처리
      * @return 업로드 경로
      */
-    public String uploadFromTemp(String storeFileName) throws IOException {
+    public String uploadFromTemp(String storeFileName) {
         File file = new File(getTempPath() + storeFileName);
         if (!file.exists()) {
             return null;
@@ -63,7 +63,13 @@ public class FileService {
 
         String fullPath = realDirStr + "/" + storeFileName;
         File realFile = new File(fullPath);
-        Files.copy(file.toPath(), realFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        try {
+            Files.copy(file.toPath(), realFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            throw new RuntimeException("IOException 발생", ex);
+        }
+
         return fullPath.replace(fileUploadDir, "");
     }
 

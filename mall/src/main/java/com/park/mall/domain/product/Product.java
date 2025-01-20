@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -26,6 +28,9 @@ public class Product {
 
     @Embedded
     private UpdateInfo updateInfo = new UpdateInfo();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
+    private List<ProductImg> productImgs = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

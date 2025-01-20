@@ -67,6 +67,7 @@ public class ProductController {
             );
         }
 
+        productService.addProduct(productRegister.convertToProduct());
         return ResponseEntity.ok().build();
     }
 }

@@ -1,0 +1,109 @@
+package com.park.mall.service;
+
+import com.park.mall.domain.product.Product;
+import com.park.mall.domain.product.ProductImg;
+import com.park.mall.repository.product.ProductJpaRepository;
+import com.park.mall.repository.product.ProductSearchCondition;
+import com.park.mall.service.file.FileService;
+import com.park.mall.service.product.ProductService;
+import com.park.mall.service.product.dto.AdminProductSearch;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@SpringBootTest
+public class ProductServiceTest {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private ProductJpaRepository productJpaRepository;
+
+    private final List<Product> productList = new ArrayList<>();
+
+    @Test
+    @Transactional
+    @Rollback
+    void addProduct() throws Exception {
+        //given
+        InputStream inputStream = getClass().getResourceAsStream("/static/img/test.jpg");
+        MockMultipartFile multipartFile = new MockMultipartFile(
+                "file", // 요청 파라미터 이름
+                "test.jpg",   // 원래 파일 이름
+                "image/jpeg", // MIME 타입
+                inputStream
+        );
+        String fileName = fileService.uploadTemp(multipartFile);
+
+        Product product = new Product();
+        product.setName("test");
+        product.setPrice(2000);
+
+        ProductImg productImg = new ProductImg();
+        productImg.setProduct(product);
+        productImg.setMainImgName(fileName);
+        productImg.setDescImgName(fileName);
+        product.getProductImgs().add(productImg);
+
+        //when
+        productService.addProduct(product);
+
+        //then
+        Optional<Product> oProduct = productJpaRepository.findById(product.getId());
+        Assertions.assertFalse(oProduct.isEmpty());
+        Product srchProduct = oProduct.get();
+        Assertions.assertEquals("test", srchProduct.getName());
+        Assertions.assertEquals(2000, srchProduct.getPrice());
+        ProductImg srchProductImg = srchProduct.getProductImgs().get(0);
+        Assertions.assertNotNull(srchProductImg);
+        Assertions.assertNotNull(srchProductImg.getMainImgPath());
+        Assertions.assertNotNull(srchProductImg.getDescImgName());
+        Assertions.assertEquals(productImg.getMainImgName(), srchProductImg.getMainImgName());
+        Assertions.assertEquals(productImg.getDescImgName(), srchProductImg.getDescImgName());
+    }
+
+    @Test
+    void searchProductForAdmin() {
+        //given
+        for(int i = 0; i < 10; i++) {
+            productList.add(addProduct("park" + i, i * 1000));
+        }
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Map<String, Object> response = productService.searchProductForAdmin(new AdminProductSearch(), pageable);
+
+        //then
+        Integer size = productList.size();
+        Assertions.assertEquals(1, (Integer) response.get("page"));
+        Assertions.assertTrue((Long) response.get("records") >= size);
+
+        productJpaRepository.deleteAll(productList);
+    }
+
+    private Product addProduct(String name, Integer price) {
+        Product newProduct = new Product();
+        newProduct.setName(name);
+        newProduct.setPrice(price);
+        newProduct.getCreateInfo().setCreateId("manager");
+        newProduct.getUpdateInfo().setModifyId("owner");
+        return productJpaRepository.save(newProduct);
+    }
+}
