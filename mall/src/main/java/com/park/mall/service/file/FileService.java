@@ -1,12 +1,17 @@
 package com.park.mall.service.file;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,6 +22,9 @@ public class FileService {
 
     @Value("${file.upload.dir}")
     private String fileUploadDir;
+
+    @Value("${file.temp.dir}")
+    private String fileTempDir;
 
     private final SimpleDateFormat dtFormat = new SimpleDateFormat("yyyyMMdd");
 
@@ -33,7 +41,7 @@ public class FileService {
                 }
 
                 String storeFileName = createStoreFileName(file.getOriginalFilename());
-                String fullPath = getTempPath() + storeFileName;
+                String fullPath = getTempPath() + "/" + storeFileName;
                 file.transferTo(new File(fullPath));
                 return storeFileName;
             } else {
@@ -49,7 +57,7 @@ public class FileService {
      * @return 업로드 경로
      */
     public String uploadFromTemp(String storeFileName) {
-        File file = new File(getTempPath() + storeFileName);
+        File file = new File(getTempPath() + "/" + storeFileName);
         if (!file.exists()) {
             return null;
         }
@@ -73,8 +81,24 @@ public class FileService {
         return fullPath.replace(fileUploadDir, "");
     }
 
+    public Resource getResource(String filePath) {
+        try {
+            String[] filePathSplit = filePath.split("/");
+            String dir = "";
+            for (int i = 0; i < filePathSplit.length - 1; i++) {
+                dir = filePathSplit[i] + "/";
+            }
+            Path path = Paths.get(fileUploadDir + "/" + dir)
+                    .resolve(filePathSplit[filePathSplit.length - 1])
+                    .normalize();
+            return new UrlResource(path.toUri());
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("Resource Exception", ex);
+        }
+    }
+
     public String getTempPath() {
-        return fileUploadDir + "/temp/";
+        return fileUploadDir + "/" + fileTempDir;
     }
 
     private String createStoreFileName(String originalFilename) {

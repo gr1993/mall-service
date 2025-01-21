@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.Map;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -80,5 +82,25 @@ public class FileControllerTest {
 
         //then
         mvcAction.andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void downloadFile() throws Exception {
+        //given
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.when(resource.exists()).thenReturn(true);
+        Mockito.when(resource.getFilename()).thenReturn("fileName.jpg");
+
+        Mockito.when(fileService.getResource(Mockito.any(String.class)))
+                .thenReturn(resource);
+
+        //when
+        ResultActions mvcAction = mockMvc.perform(
+                get("/admin/file/download")
+                        .param("filePath", "temp/fileName.jpg")
+        );
+
+        //then
+        mvcAction.andExpect(status().isOk());
     }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
@@ -20,6 +21,9 @@ public class FileServiceTest {
 
     @Value("${file.upload.dir}")
     private String fileUploadDir;
+
+    @Value("${file.temp.dir}")
+    private String fileTempDir;
 
     InputStream inputStream;
 
@@ -42,7 +46,7 @@ public class FileServiceTest {
         String fileName = fileService.uploadTemp(multipartFile);
 
         //then
-        File file = new File(fileService.getTempPath() + fileName);
+        File file = new File(fileService.getTempPath() + "/" + fileName);
         Assertions.assertTrue(file.exists());
     }
 
@@ -65,4 +69,23 @@ public class FileServiceTest {
         Assertions.assertTrue(file.exists());
     }
 
+    @Test
+    void getResource() throws Exception {
+        //given
+        MockMultipartFile multipartFile = new MockMultipartFile(
+                "file", // 요청 파라미터 이름
+                "test.jpg",   // 원래 파일 이름
+                "image/jpeg", // MIME 타입
+                inputStream
+        );
+        String fileName = fileService.uploadTemp(multipartFile);
+        String filePath = fileTempDir + "/" + fileName;
+
+        //when
+        Resource resource = fileService.getResource(filePath);
+
+        //then
+        Assertions.assertNotNull(resource);
+        Assertions.assertTrue(resource.exists());
+    }
 }
