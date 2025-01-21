@@ -19,16 +19,20 @@
         <div class="card mb-4">
             <div class="card-body">
                 <form id="searchForm">
+                    <input class="form-control d-none" type="file" id="inputFile" onchange="fileChange(this);">
                     <div class="mb-3 row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-2">
-                            <img src="https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg" alt="상품 대표 이미지" height="200" width="200" />
+                            <img id="mainImgTag" class="d-none" src="" alt="상품 대표 이미지" height="200" width="200" />
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="mainImg" class="col-sm-2 col-form-label">상품 이미지 <span class="text-danger">*</span></label>
-                        <div class="col-sm-4">
-                            <input class="form-control" type="file" id="mainImg">
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="mainImg" name="mainImg">
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="button" class="btn btn-light" onclick="fileSelect('main');">파일 선택</button>
                         </div>
                     </div>
                     <div class="mb-3 row">
@@ -45,8 +49,11 @@
                     </div>
                     <div class="mb-3 row">
                         <label for="descImg" class="col-sm-2 col-form-label">상세 이미지</label>
-                        <div class="col-sm-4">
-                            <input class="form-control" type="file" id="descImg">
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="descImg" name="descImg">
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="button" class="btn btn-light" onclick="fileSelect('desc');">파일 선택</button>
                         </div>
                     </div>
                     <div class="row">
@@ -68,11 +75,54 @@
     </div>
 
     <script>
+        var fileType = '';
+
+        // 파일 선택창 띄우기
+        function fileSelect(type) {
+            fileType = type;
+            document.getElementById("inputFile").click();
+        }
+
+        // 파일 선택 시 임시 업로드
+        function fileChange(inputFile) {
+            const file = inputFile.files[0];
+
+            if (!file) {
+                alert("파일을 선택해주세요.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetchPost({
+                url : '/admin/file/temp/upload',
+                data : formData,
+                success : async function(response) {
+                    const res = await response.json();
+
+                    // 상품 이미지는 미리보기 표시
+                    if (fileType === 'main') {
+                        $('#mainImgTag').attr("src", '/admin/file/download?filePath=' + res.fileTempDir + '/' + res.fileName);
+                        $('#mainImgTag').removeClass('d-none');
+                    }
+
+                    $('#' + fileType + 'Img').val(res.fileName);
+                    alert("임시 업로드에 성공하였습니다.");
+                },
+                fail : function(response) {
+                    alert("임시 업로드 실패하였습니다.");
+                }
+            });
+        }
+
+        // 상품 등록하기
         function register() {
             if (confirm('[[#{product.register.before}]]')) {
 
             }
         }
+
     </script>
 </main>
 </body>

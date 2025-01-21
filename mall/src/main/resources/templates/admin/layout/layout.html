@@ -11,7 +11,10 @@
     <title th:replace="${title}">관리자</title>
 
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/common.css" />
+
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/redmond/jquery-ui.css" type="text/css" />
@@ -57,7 +60,10 @@
       </footer>
     </div>
   </div>
+  <div th:replace="~{common/component/spinner.html :: div}"></div>
 
+  <script th:replace="~{common/component/spinner.html :: script}"></script>
   <script src="/js/scripts.js"></script>
+  <script src="/js/fetchApi.js"></script>
 </body>
 </html>

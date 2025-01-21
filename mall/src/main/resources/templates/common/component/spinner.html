@@ -1,0 +1,19 @@
+<div id="spinner-overlay" class="spinner-overlay">
+    <div class="spinner-wrapper">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showSpinner() {
+      const spinnerOverlay = document.getElementById("spinner-overlay");
+      spinnerOverlay.classList.add("show");
+    }
+
+    function hideSpinner() {
+      const spinnerOverlay = document.getElementById("spinner-overlay");
+      spinnerOverlay.classList.remove("show");
+    }
+</script>
