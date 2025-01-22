@@ -27,8 +27,24 @@
   height: 3rem;
 }
 
+/* 스피너 활성화 */
 .spinner-overlay.show {
   visibility: visible; /* 표시 */
   opacity: 1; /* 불투명 */
   transition: visibility 0s, opacity 500ms linear; /* 표시될 때 바로 보이도록 설정 */
+}
+
+
+/* 기본 에러 메시지 스타일 */
+.error-message {
+    color: red; /* 에러 메시지 색상 */
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* 에러가 있을 때 input 스타일 */
+.error-border {
+    border: 2px solid red;
+    border-radius: 4px;
+    outline: none;
 }

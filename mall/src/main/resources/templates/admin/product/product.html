@@ -50,7 +50,7 @@
 
     <div class="mb-2 text-end">
       <button type="button" class="btn btn-primary" onclick="location.href='/admin/product/register';">등록</button>
-      <button type="button" class="btn btn-success">수정</button>
+      <button type="button" class="btn btn-success" onclick="updateProduct();">수정</button>
       <button type="button" class="btn btn-danger">삭제</button>
     </div>
 
@@ -87,7 +87,7 @@
 		],
 		autowidth: true,   // true인 경우 화면 너비에 맞춤
 		rownumbers : true, // 일련번호 컬럼 추가
-		multiselect: true, // 선택박스 컬럼 추가
+		multiselect: false,// 선택박스 컬럼 추가
 		pager: '#pager',   // pager로 사용항 div의 id
 		rowNum: 10,        // 초기 페이지당 출력 갯수
 		rowList: [10, 20, 50],  //페이지 표출 갯수 리스트
@@ -108,6 +108,17 @@
 		mtype: 'GET',
 		page: 1,
       });
+    }
+
+    // 수정
+    function updateProduct() {
+      var id = mallGrid.getGrid().jqGrid('getGridParam', 'selrow');
+      if (!id) {
+        alert('상품을 선택하세요.');
+        return;
+      }
+
+      location.href='/admin/product/register?id=' + id;
     }
   </script>
 </main>

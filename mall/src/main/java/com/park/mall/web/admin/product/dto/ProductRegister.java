@@ -13,6 +13,8 @@ import org.hibernate.validator.constraints.Range;
 @Setter
 public class ProductRegister {
 
+    private Long id;
+
     @NotBlank(message = "{NotBlank}")
     private String mainImg;
 
@@ -28,10 +30,12 @@ public class ProductRegister {
 
     public Product convertToProduct() {
         Product product = new Product();
+        product.setId(this.id);
         product.setName(this.name);
         product.setPrice(this.price);
 
         ProductImg productImg = new ProductImg();
+        productImg.setProduct(product);
         productImg.setMainImgName(this.mainImg);
         productImg.setDescImgName(this.descImg);
         product.getProductImgs().add(productImg);

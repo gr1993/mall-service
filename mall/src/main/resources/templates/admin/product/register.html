@@ -13,7 +13,7 @@
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item">상품</li>
             <li class="breadcrumb-item">상품 관리</li>
-            <li class="breadcrumb-item active">등록</li>
+            <li class="breadcrumb-item active" th:text="${isEdit ? '수정' : '등록'}">등록</li>
         </ol>
 
         <div class="card mb-4">
@@ -23,34 +23,43 @@
                     <div class="mb-3 row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-2">
-                            <img id="mainImgTag" class="d-none" src="" alt="상품 대표 이미지" height="200" width="200" />
+                            <img id="mainImgTag"
+                                 th:classappend="${isEdit ? '' : 'd-none'}"
+                                 th:src="${isEdit ? '/admin/file/download?filePath=' + productDetail.mainPath : ''}"
+                                 alt="상품 대표 이미지"
+                                 height="200"
+                                 width="200" />
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="mainImg" class="col-sm-2 col-form-label">상품 이미지 <span class="text-danger">*</span></label>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="mainImg" name="mainImg">
+                            <input type="text" class="form-control" id="mainImg" name="mainImg" th:value="${isEdit ? productDetail.mainImg : ''}" readonly>
+                            <div id="mainImgError" class="error-message"></div>
                         </div>
                         <div class="col-sm-1">
                             <button type="button" class="btn btn-light" onclick="fileSelect('main');">파일 선택</button>
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="productName" class="col-sm-2 col-form-label">상품명 <span class="text-danger">*</span></label>
+                        <label for="name" class="col-sm-2 col-form-label">상품명 <span class="text-danger">*</span></label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="productName" name="productName">
+                            <input type="text" class="form-control" id="name" name="name" th:value="${isEdit ? productDetail.name : ''}">
+                            <div id="nameError" class="error-message"></div>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="price" class="col-sm-2 col-form-label">가격 <span class="text-danger">*</span></label>
                         <div class="col-sm-2">
-                            <input type="number" class="form-control" id="price" name="price">
+                            <input type="number" class="form-control" id="price" name="price" th:value="${isEdit ? productDetail.price : ''}">
+                            <div id="priceError" class="error-message"></div>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="descImg" class="col-sm-2 col-form-label">상세 이미지</label>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="descImg" name="descImg">
+                            <input type="text" class="form-control" id="descImg" name="descImg" th:value="${isEdit ? productDetail.descImg : ''}" readonly>
+                            <div id="descImgError" class="error-message"></div>
                         </div>
                         <div class="col-sm-1">
                             <button type="button" class="btn btn-light" onclick="fileSelect('desc');">파일 선택</button>
@@ -59,12 +68,17 @@
                     <div class="row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-2">
-                            <button class="btn btn-primary btn-lg w-100" id="btnNavbarSearch" type="button">
+                            <button class="btn btn-lg w-100"
+                                    th:classappend="${isEdit ? 'btn-success' : 'btn-primary'}"
+                                    id="btnNavbarSearch"
+                                    type="button"
+                                    onclick="register();"
+                                    th:text="${isEdit ? '수정' : '등록'}">
                                 등록
                             </button>
                         </div>
                         <div class="col-sm-2">
-                            <button class="btn btn-secondary btn-lg w-100" type="button">
+                            <button class="btn btn-secondary btn-lg w-100" type="button" onclick="history.back();">
                                 뒤로
                             </button>
                         </div>
@@ -110,16 +124,73 @@
                     $('#' + fileType + 'Img').val(res.fileName);
                     alert("임시 업로드에 성공하였습니다.");
                 },
-                fail : function(response) {
+                fail : async function(response) {
                     alert("임시 업로드 실패하였습니다.");
                 }
             });
         }
 
-        // 상품 등록하기
+        // 상품 등록, 수정하기
         function register() {
-            if (confirm('[[#{product.register.before}]]')) {
+            if (confirm('[[#{${isEdit ? 'product.update.before' : 'product.register.before'}}]]')) {
+                const mainImgInput = document.getElementById("mainImg");
+                const nameInput = document.getElementById("name");
+                const priceInput = document.getElementById("price");
+                const descImgInput = document.getElementById("descImg");
 
+                const mainImgError = document.getElementById("mainImgError");
+                const nameError = document.getElementById("nameError");
+                const priceError = document.getElementById("priceError");
+                const descImgError = document.getElementById("descImgError");
+
+                // 초기화: 모든 필드의 에러 메시지와 스타일 제거
+                mainImgError.textContent = "";
+                nameError.textContent = "";
+                priceError.textContent = "";
+                descImgError.textContent = "";
+                mainImgInput.classList.remove("error-border");
+                nameInput.classList.remove("error-border");
+                priceInput.classList.remove("error-border");
+                descImgInput.classList.remove("error-border");
+
+                fetchPost({
+                    url : '/admin/product/register',
+                    data : {
+                        [[${isEdit ? 'id : ' + productDetail.id + ',' : ''}]]
+                        mainImg : mainImgInput.value,
+                        name : nameInput.value,
+                        price : priceInput.value,
+                        descImg : descImgInput.value,
+                    },
+                    success : async function(response) {
+                        alert("[[#{${isEdit ? 'product.update.complete' : 'product.register.complete'}}]]");
+                        location.href = '/admin/product';
+                    },
+                    fail : async function(response) {
+                        const res = await response.json();
+
+                        for (let i = 0; i < res.length; i++) {
+                            const split = res[i].split(':');
+
+                            if (split[0] === 'mainImg') {
+                                mainImgError.textContent = split[1];
+                                mainImgInput.classList.add("error-border");
+                            }
+                            if (split[0] === 'name') {
+                                nameError.textContent = split[1];
+                                nameInput.classList.add("error-border");
+                            }
+                            if (split[0] === 'price') {
+                                priceError.textContent = split[1];
+                                priceInput.classList.add("error-border");
+                            }
+                            if (split[0] === 'descImg') {
+                                descImgError.textContent = split[1];
+                                descImgInput.classList.add("error-border");
+                            }
+                        }
+                    }
+                });
             }
         }
 

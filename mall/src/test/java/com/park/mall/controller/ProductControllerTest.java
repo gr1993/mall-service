@@ -1,10 +1,13 @@
 package com.park.mall.controller;
 
 import com.park.mall.service.product.ProductService;
+import com.park.mall.service.product.dto.AdminProductDetail;
 import com.park.mall.web.admin.product.ProductController;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -70,6 +73,31 @@ public class ProductControllerTest {
     }
 
     @Test
+    void productRegisterViewWithId() throws Exception {
+        //given
+        AdminProductDetail productDetail = new AdminProductDetail();
+        productDetail.setId(1L);
+        productDetail.setName("테스트 상품");
+        productDetail.setPrice(1500);
+        productDetail.setMainImg("mainImg.jpg");
+        productDetail.setDescImg("descImg.jpg");
+        productDetail.setMainPath("/temp/mainImg.jpg");
+        productDetail.setDescPath("/temp/descImg.jpg");
+        Mockito.when(productService.getProductDetail(Mockito.any(Long.class)))
+                .thenReturn(productDetail);
+
+        //when
+        ResultActions mvcAction = mockMvc.perform(get("/admin/product/register?id=1"));
+
+        //then
+        MvcResult mvcResult = mvcAction
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
     void productRegisterNoBody() throws Exception {
         //when
         ResultActions mvcAction = mockMvc.perform(post("/admin/product/register"));
@@ -101,13 +129,21 @@ public class ProductControllerTest {
 
     @Test
     void productRegisterSuccess() throws Exception {
+        //given
+        String jsonRequest = """
+        {
+            "mainImg": "mainImg.jpg",
+            "name": "park",
+            "price": "1000",
+            "descImg": "descImg.jpg"
+        }
+        """;
+
         //when
         ResultActions mvcAction = mockMvc.perform(
                 post("/admin/product/register")
-                        .param("mainImg", "mainImg.jpg")
-                        .param("name", "park")
-                        .param("price", "1000")
-                        .param("descImg", "descImg.jpg")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
         );
 
         //then

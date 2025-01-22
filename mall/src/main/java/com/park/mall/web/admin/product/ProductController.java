@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +48,25 @@ public class ProductController {
     }
 
     @GetMapping("/product/register")
-    public String productRegisterView() {
+    public String productRegisterView(
+            @RequestParam(value = "id", required = false) Long id,
+            Model model) {
+        if (id != null) {
+            model.addAttribute("isEdit", true);
+            model.addAttribute("productDetail", productService.getProductDetail(id));
+        } else {
+            model.addAttribute("isEdit", false);
+        }
         return "admin/product/register";
     }
 
+    /**
+     * 등록, 수정을 지원하는 엔드포인트
+     */
     @PostMapping("/product/register")
     @ResponseBody
     public ResponseEntity<?> productRegister(
-            @Validated @ModelAttribute ProductRegister productRegister,
+            @Validated @RequestBody ProductRegister productRegister,
             BindingResult bindingResult
             ) {
         if (bindingResult.hasErrors()) {
@@ -62,7 +74,7 @@ public class ProductController {
             return ResponseEntity.badRequest().body(
                     bindingResult.getFieldErrors()
                             .stream()
-                            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                            .map(error -> error.getField() + ":" + error.getDefaultMessage())
                             .toList()
             );
         }
