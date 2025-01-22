@@ -1,5 +1,6 @@
 package com.park.mall.controller;
 
+import com.park.mall.config.SecurityConfig;
 import com.park.mall.service.product.ProductService;
 import com.park.mall.service.product.dto.AdminProductDetail;
 import com.park.mall.web.admin.product.ProductController;
@@ -7,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -17,8 +20,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(ProductController.class)
+@Import(SecurityConfig.class)
 public class ProductControllerTest {
 
     @Autowired
@@ -28,6 +33,7 @@ public class ProductControllerTest {
     private ProductService productService;
 
     @Test
+    @WithMockUser(roles = "admin")
     void productView() throws Exception {
         //when
         ResultActions mvcAction = mockMvc.perform(get("/admin/product"));
@@ -42,6 +48,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "admin")
     void productList() throws Exception {
         //when
         ResultActions mvcAction = mockMvc.perform(
@@ -60,6 +67,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "admin")
     void productRegisterView() throws Exception {
         //when
         ResultActions mvcAction = mockMvc.perform(get("/admin/product/register"));
@@ -73,6 +81,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "admin")
     void productRegisterViewWithId() throws Exception {
         //given
         AdminProductDetail productDetail = new AdminProductDetail();
@@ -98,6 +107,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "admin")
     void productRegisterNoBody() throws Exception {
         //when
         ResultActions mvcAction = mockMvc.perform(post("/admin/product/register"));
@@ -111,6 +121,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "admin")
     void productRegisterInvalidValue() throws Exception {
         //when
         ResultActions mvcAction = mockMvc.perform(
@@ -128,6 +139,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "admin")
     void productRegisterSuccess() throws Exception {
         //given
         String jsonRequest = """
@@ -144,6 +156,7 @@ public class ProductControllerTest {
                 post("/admin/product/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
+                        .with(csrf())
         );
 
         //then
@@ -153,10 +166,12 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "admin")
     void productDelete() throws Exception {
         //when
         ResultActions mvcAction = mockMvc.perform(
                 post("/admin/product/delete/1")
+                        .with(csrf())
         );
 
         //then

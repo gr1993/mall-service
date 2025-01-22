@@ -22,7 +22,8 @@ public class SecurityConfig {
                 authorizeRequests
                     .requestMatchers(
                             "/admin/login",
-                            "/admin/logout"
+                            "/admin/logout",
+                            "/admin/file/**"
                     ).permitAll()
                     .requestMatchers("/admin/**").hasAnyRole("admin")
                     .requestMatchers(
