@@ -82,4 +82,11 @@ public class ProductController {
         productService.addProduct(productRegister.convertToProduct());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/product/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<?> productDelete(@PathVariable("id") Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok().build();
+    }
 }

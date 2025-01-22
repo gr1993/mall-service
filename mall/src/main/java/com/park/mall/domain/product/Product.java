@@ -29,7 +29,7 @@ public class Product {
     @Embedded
     private UpdateInfo updateInfo = new UpdateInfo();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<ProductImg> productImgs = new ArrayList<>();
 
     @PrePersist

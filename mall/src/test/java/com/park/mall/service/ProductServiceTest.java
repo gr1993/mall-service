@@ -122,6 +122,21 @@ public class ProductServiceTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
+    void deleteProduct() throws Exception {
+        //given
+        productService.addProduct(product);
+
+        //when
+        productService.deleteProduct(product.getId());
+
+        //then
+        Optional<Product> oProduct = productJpaRepository.findById(product.getId());
+        Assertions.assertTrue(oProduct.isEmpty());
+    }
+
+    @Test
     @Tag("skipBeforeEach")
     void searchProductForAdmin() {
         //given

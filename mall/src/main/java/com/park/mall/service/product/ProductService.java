@@ -79,6 +79,10 @@ public class ProductService {
         }
     }
 
+    public void deleteProduct(Long id) {
+        productJpaRepository.deleteById(id);
+    }
+
     public Map<String, Object> searchProductForAdmin(AdminProductSearch condition, Pageable pageable) {
         ProductSearchCondition searchCondition = new ProductSearchCondition();
         searchCondition.setId(condition.getProductId());

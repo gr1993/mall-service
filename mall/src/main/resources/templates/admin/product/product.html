@@ -51,7 +51,7 @@
     <div class="mb-2 text-end">
       <button type="button" class="btn btn-primary" onclick="location.href='/admin/product/register';">등록</button>
       <button type="button" class="btn btn-success" onclick="updateProduct();">수정</button>
-      <button type="button" class="btn btn-danger">삭제</button>
+      <button type="button" class="btn btn-danger" onclick="deleteProduct();">삭제</button>
     </div>
 
     <div class="card mb-4">
@@ -96,6 +96,10 @@
 		height: 300,
 		viewrecords: true, // 총 레코드 수 표시
 	  });
+
+      setTimeout(() => {
+        searchProductList();
+      }, 100);
     });
 
     // 조회
@@ -119,6 +123,29 @@
       }
 
       location.href='/admin/product/register?id=' + id;
+    }
+
+    // 삭제
+    function deleteProduct() {
+      var id = mallGrid.getGrid().jqGrid('getGridParam', 'selrow');
+      if (!id) {
+        alert('상품을 선택하세요.');
+        return;
+      }
+
+      if (confirm('[[#{product.delete.before}]]')) {
+        fetchPost({
+          url : '/admin/product/delete/' + id,
+          data : {},
+          success : async function(response) {
+            alert("[[#{product.delete.complete}]]");
+            searchProductList();
+          },
+          fail : async function(response) {
+            alert("[[#{product.delete.fail}]]");
+          }
+        });
+      }
     }
   </script>
 </main>

@@ -151,4 +151,15 @@ public class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
     }
+
+    @Test
+    void productDelete() throws Exception {
+        //when
+        ResultActions mvcAction = mockMvc.perform(
+                post("/admin/product/delete/1")
+        );
+
+        //then
+        mvcAction.andExpect(status().isOk());
+    }
 }
