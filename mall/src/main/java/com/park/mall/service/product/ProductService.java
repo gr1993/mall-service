@@ -5,6 +5,7 @@ import com.park.mall.domain.product.ProductImg;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.repository.product.ProductQueryRepository;
 import com.park.mall.repository.product.ProductSearchCondition;
+import com.park.mall.security.AdminUserDetails;
 import com.park.mall.service.file.FileService;
 import com.park.mall.service.product.dto.AdminProductDetail;
 import com.park.mall.service.product.dto.AdminProductInfo;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -35,9 +37,14 @@ public class ProductService {
     private MessageSource messageSource;
 
     public void addProduct(Product product) {
+        AdminUserDetails userDetails = (AdminUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         // 등록
         if (product.getId() == null) {
+            product.getCreateInfo().setCreateId(userDetails.getUsername());
+            product.getUpdateInfo().setModifyId(userDetails.getUsername());
             ProductImg productImg = product.getProductImgs().get(0);
+            productImg.getCreateInfo().setCreateId(userDetails.getUsername());
 
             //임시 경로에서 실제 업로드 처리하기
             String mainImgPath = fileService.uploadFromTemp(productImg.getMainImgName());
@@ -51,6 +58,7 @@ public class ProductService {
         }
         // 수정
         else {
+            product.getUpdateInfo().setModifyId(userDetails.getUsername());
             Optional<Product> oProduct = productJpaRepository.findByIdWithProductImgs(product.getId());
             if (oProduct.isEmpty()) {
                 String errorMessage = messageSource.getMessage("product.NotFound", null, Locale.getDefault());

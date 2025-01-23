@@ -1,9 +1,11 @@
 package com.park.mall.service;
 
+import com.park.mall.domain.admin.Admin;
 import com.park.mall.domain.product.Product;
 import com.park.mall.domain.product.ProductImg;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.repository.product.ProductSearchCondition;
+import com.park.mall.security.AdminUserDetails;
 import com.park.mall.service.file.FileService;
 import com.park.mall.service.product.ProductService;
 import com.park.mall.service.product.dto.AdminProductDetail;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +65,18 @@ public class ProductServiceTest {
             productImg.setDescImgName(fileName);
             product.getProductImgs().add(productImg);
         }
+
+        // 인증 정보 설정
+        Admin admin = new Admin();
+        admin.setId("park");
+        admin.setPassword(null);
+        admin.setName("박강림");
+        AdminUserDetails adminUserDetails = new AdminUserDetails(admin);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(adminUserDetails, null, adminUserDetails.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     @Test

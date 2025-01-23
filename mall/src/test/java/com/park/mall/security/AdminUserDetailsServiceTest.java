@@ -40,6 +40,6 @@ public class AdminUserDetailsServiceTest {
         Assertions.assertEquals(admin.getPassword(), userDetails.getPassword());
         Assertions.assertEquals(admin.getName(), userDetails.getName());
         GrantedAuthority grantedAuthority = userDetails.getAuthorities().iterator().next();
-        Assertions.assertEquals("ROLE_ADMIN", grantedAuthority.getAuthority());
+        Assertions.assertEquals("ROLE_admin", grantedAuthority.getAuthority());
     }
 }
