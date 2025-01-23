@@ -58,7 +58,6 @@ public class ProductService {
         }
         // 수정
         else {
-            product.getUpdateInfo().setModifyId(userDetails.getUsername());
             Optional<Product> oProduct = productJpaRepository.findByIdWithProductImgs(product.getId());
             if (oProduct.isEmpty()) {
                 String errorMessage = messageSource.getMessage("product.NotFound", null, Locale.getDefault());
@@ -67,6 +66,8 @@ public class ProductService {
 
             ProductImg productImg = product.getProductImgs().get(0);
             Product srchProduct = oProduct.get();
+            srchProduct.getUpdateInfo().setModifyId(userDetails.getUsername());
+
             ProductImg srchProductImg =  srchProduct.getProductImgs().get(0);
             // 상품이미지가 변경되었으면 업로드 처리
             if (!srchProductImg.getMainImgName().equals(productImg.getMainImgName())) {
