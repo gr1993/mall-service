@@ -29,8 +29,9 @@ public class SecurityConfig {
                     .failureHandler(new AdminAuthenticationFailureHandler());
             })
             .logout(logout -> {
-                logout.logoutUrl("/logout")
-                      .deleteCookies("JSESSIONID", "remember-me");
+                logout.logoutUrl("/admin/logout")
+                        .logoutSuccessUrl("/admin/login")
+                        .deleteCookies("JSESSIONID", "remember-me");
             })
             .authorizeHttpRequests(authorizeRequests -> {
                 authorizeRequests
