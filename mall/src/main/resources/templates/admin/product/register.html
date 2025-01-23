@@ -109,8 +109,14 @@
             const formData = new FormData();
             formData.append("file", file);
 
+            const csrfToken = $("meta[name='_csrf']").attr("content");
+            const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
             fetchPost({
                 url : '/admin/file/temp/upload',
+                headers : {
+                    [csrfHeader] : csrfToken
+                },
                 data : formData,
                 success : async function(response) {
                     const res = await response.json();
@@ -153,8 +159,14 @@
                 priceInput.classList.remove("error-border");
                 descImgInput.classList.remove("error-border");
 
+                const csrfToken = $("meta[name='_csrf']").attr("content");
+                const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
                 fetchPost({
                     url : '/admin/product/register',
+                    headers : {
+                        [csrfHeader] : csrfToken
+                    },
                     data : {
                         [[${isEdit ? 'id : ' + productDetail.id + ',' : ''}]]
                         mainImg : mainImgInput.value,

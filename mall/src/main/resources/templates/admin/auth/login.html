@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="description" content="" />
   <meta name="author" content="" />
-  <title>Login</title>
+
+  <title>관리자 로그인</title>
+
+  <meta name="_csrf" th:content="${_csrf.token}">
+  <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
   <link href="/css/styles.css" rel="stylesheet" />
   <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
@@ -24,13 +29,13 @@
                 </h3>
               </div>
               <div class="card-body">
-                <form>
+                <form id="loginForm">
                   <div class="form-floating mb-3">
-                    <input class="form-control" id="id" type="text" placeholder="아이디" />
-                    <label for="id">아이디</label>
+                    <input class="form-control" id="username" name="username" type="text" placeholder="아이디" />
+                    <label for="username">아이디</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input class="form-control" id="password" type="password" placeholder="패스워드" />
+                    <input class="form-control" id="password" name="password" type="password" placeholder="패스워드" />
                     <label for="password">패스워드</label>
                   </div>
                   <div class="form-check mb-3">
@@ -38,7 +43,7 @@
                     <label class="form-check-label" for="inputRememberPassword">비밀번호 기억하기</label>
                   </div>
                   <div class="mt-4 mb-0">
-                    <a class="btn btn-primary btn-lg w-100">로그인</a>
+                    <a class="btn btn-primary btn-lg w-100" onclick="login();">로그인</a>
                   </div>
                 </form>
               </div>
@@ -63,8 +68,39 @@
     </footer>
   </div>
 </div>
+<div th:replace="~{common/component/spinner.html :: div}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script src="/js/fetchApi.js"></script>
 <script src="/js/scripts.js"></script>
+<script th:replace="~{common/component/spinner.html :: script}"></script>
+
+<script>
+  function login() {
+    const csrfToken = $("meta[name='_csrf']").attr("content");
+    const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+    const formData = $('#loginForm').serialize();
+
+    fetchPost({
+      url : '/admin/login',
+      headers : {
+        [csrfHeader] : csrfToken
+      },
+      data : formData,
+      simpleForm : true,
+      success : async function(response) {
+        location.href = '/admin/main';
+      },
+      fail : async function(response) {
+        alert("[[#{admin.login}]]");
+      }
+    });
+  }
+</script>
+
 </body>
 </html>

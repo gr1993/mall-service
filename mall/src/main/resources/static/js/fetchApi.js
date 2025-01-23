@@ -1,16 +1,32 @@
-async function fetchPost({ url, data, success, fail }) {
+async function fetchPost({ url, data, headers, success, fail, simpleForm }) {
     try {
         showSpinner();
 
         const option = { method: "POST" }
+        if (headers) {
+            option.headers = headers;
+        } else {
+            option.headers = {};
+        }
 
         // form 전송
-        if (data instanceof FormData) {
+        if (simpleForm) {
+            option.headers = {
+                ...option.headers,
+                "Content-Type": "application/x-www-form-urlencoded"
+            };
+            option.body = data;
+        }
+        // 멀티파티 폼
+        else if (data instanceof FormData) {
             option.body = data;
         }
         // json 전송
         else {
-            option.headers = { "Content-Type": "application/json" };
+            option.headers = {
+                ...option.headers,
+                "Content-Type": "application/json"
+            };
             option.body = JSON.stringify(data);
         }
 

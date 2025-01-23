@@ -134,8 +134,14 @@
       }
 
       if (confirm('[[#{product.delete.before}]]')) {
+        const csrfToken = $("meta[name='_csrf']").attr("content");
+        const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
         fetchPost({
           url : '/admin/product/delete/' + id,
+          headers : {
+            [csrfHeader] : csrfToken
+          },
           data : {},
           success : async function(response) {
             alert("[[#{product.delete.complete}]]");
