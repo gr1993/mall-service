@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link})}"
+      lang="ko"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 상세</title>
+
+    <link rel="stylesheet" href="/css/mall/cart.css" />
+</head>
+<body>
+
+<!-- 메인 컨텐츠 -->
+<main class="main-content container mt-4">
+    <h1>장바구니</h1>
+    <div class="cart-item">
+        <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
+        <div class="item-info">
+            <h5>상품명 1</h5>
+            <p class="price">₩35,000</p>
+        </div>
+        <input type="number" class="form-control quantity-selector" value="1" min="1" onchange="updateCartTotal()">
+    </div>
+    <div class="cart-item">
+        <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
+        <div class="item-info">
+            <h5>상품명 2</h5>
+            <p class="price">₩50,000</p>
+        </div>
+        <input type="number" class="form-control quantity-selector" value="1" min="1" onchange="updateCartTotal()">
+    </div>
+
+    <!-- 장바구니 합계 -->
+    <div class="cart-summary">
+        <p class="total-price" id="cart-total">총 금액: ₩85,000</p>
+        <button class="btn btn-primary btn-lg mt-3">주문하기</button>
+    </div>
+</main>
+
+</body>
+</html>

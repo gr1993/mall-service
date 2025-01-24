@@ -45,7 +45,8 @@ public class SecurityConfig {
                             "/",
                             "/login",
                             "/register",
-                            "/product/**"
+                            "/product/**",
+                            "/cart"
                     ).permitAll()
                     .requestMatchers(
                             "/css/**",
