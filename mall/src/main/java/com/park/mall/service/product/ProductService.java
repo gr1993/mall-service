@@ -10,6 +10,7 @@ import com.park.mall.service.file.FileService;
 import com.park.mall.service.product.dto.AdminProductDetail;
 import com.park.mall.service.product.dto.AdminProductInfo;
 import com.park.mall.service.product.dto.AdminProductSearch;
+import com.park.mall.service.product.dto.MallProductInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,25 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productJpaRepository.deleteById(id);
+    }
+
+    public Map<String, Object> searchProduct(String searchText, Pageable pageable) {
+        ProductSearchCondition searchCondition = new ProductSearchCondition();
+        searchCondition.setName(searchText);
+
+        Page<Product> page = productQueryRepository.searchPage(searchCondition, pageable, true);
+        List<Product> content = page.getContent();
+        List<MallProductInfo> productList = new ArrayList<>();
+        for(Product p : content) {
+            productList.add(new MallProductInfo(p));
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("page", page.getNumber() + 1);
+        response.put("totalPages", page.getTotalPages());
+        response.put("totalElements", page.getTotalElements());
+        response.put("data", productList);
+        return response;
     }
 
     public Map<String, Object> searchProductForAdmin(AdminProductSearch condition, Pageable pageable) {

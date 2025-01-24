@@ -75,7 +75,7 @@ public class ProductQueryRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<Product> productPage = productQueryRepository.searchPage(new ProductSearchCondition(), pageable);
+        Page<Product> productPage = productQueryRepository.searchPage(new ProductSearchCondition(), pageable, true);
 
         //then
         long total = productPage.getTotalElements();

@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 import static com.park.mall.domain.product.QProduct.product;
+import static com.park.mall.domain.product.QProductImg.productImg;
 
 @Repository
 public class ProductQueryRepository {
@@ -42,10 +43,20 @@ public class ProductQueryRepository {
     }
 
     public Page<Product> searchPage(ProductSearchCondition condition, Pageable pageable) {
+        return searchPage(condition, pageable, false);
+    }
+
+    public Page<Product> searchPage(ProductSearchCondition condition, Pageable pageable, boolean fetchJoin) {
         JPAQuery<Product> fetchQuery = query
                 .select(product)
-                .from(product)
-                .where(
+                .from(product);
+
+        if (fetchJoin) {
+            fetchQuery.join(product.productImgs, productImg)
+                    .fetchJoin();
+        }
+
+        fetchQuery.where(
                         conditions(condition)
                 )
                 .offset(pageable.getOffset())

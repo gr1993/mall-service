@@ -10,6 +10,7 @@ import com.park.mall.service.file.FileService;
 import com.park.mall.service.product.ProductService;
 import com.park.mall.service.product.dto.AdminProductDetail;
 import com.park.mall.service.product.dto.AdminProductSearch;
+import com.park.mall.service.product.dto.MallProductInfo;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -150,6 +151,36 @@ public class ProductServiceTest {
         //then
         Optional<Product> oProduct = productJpaRepository.findById(product.getId());
         Assertions.assertTrue(oProduct.isEmpty());
+    }
+
+    @Test
+    @Tag("skipBeforeEach")
+    void searchProduct() {
+        //given
+        Product newProduct = new Product();
+        newProduct.setName("searchProduct상품");
+        newProduct.setPrice(1000);
+        newProduct.getCreateInfo().setCreateId("manager");
+        newProduct.getUpdateInfo().setModifyId("owner");
+        ProductImg newProductImg = new ProductImg();
+        newProductImg.setProduct(newProduct);
+        newProductImg.setMainImgPath("/testPath");
+        newProduct.getProductImgs().add(newProductImg);
+        productJpaRepository.save(newProduct);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Map<String, Object> response = productService.searchProduct("searchProduct상품", pageable);
+
+        //then
+        List<MallProductInfo> productInfoList = (List<MallProductInfo>) response.get("data");
+        MallProductInfo productInfo = productInfoList.get(0);
+        Assertions.assertEquals(1, (Integer) response.get("page"));
+        Assertions.assertTrue((Long) response.get("totalElements") >= 1);
+        Assertions.assertEquals("/testPath", productInfo.getMainPath());
+
+        productJpaRepository.deleteById(newProduct.getId());
     }
 
     @Test

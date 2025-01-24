@@ -16,8 +16,8 @@
 <main class="main-content container mt-4">
     <!-- 검색 바 -->
     <div class="search-bar">
-        <input type="search" placeholder="검색어를 입력하세요" aria-label="Search">
-        <button type="submit">검색</button>
+        <input id="searchInput" type="search" placeholder="검색어를 입력하세요" aria-label="Search" th:value="${searchText}">
+        <button type="submit" onclick="search();">검색</button>
     </div>
 
     <div class="container-fluid">
@@ -38,99 +38,14 @@
             <!-- 상품 리스트 영역 -->
             <div class="col-md-9 content">
                 <div class="row">
-                    <!-- 상품 1 -->
-                    <div class="col-md-4">
+                    <!-- 상품 정보 -->
+                    <div class="col-md-4" th:each="product : ${productList}">
                         <div class="card">
-                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품1">
+                            <img th:src="${'/admin/file/download?filePath=' + product.mainPath}" class="card-img-top" alt="상품 이미지">
                             <div class="card-body">
-                                <h5 class="card-title">상품 1</h5>
-                                <p class="card-text">상품 1에 대한 간단한 설명입니다.</p>
-                                <p class="card-text text-primary">₩ 20,000</p>
-                                <!-- 버튼 그룹 -->
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-primary">구매하기</a>
-                                    <a href="#" class="btn btn-secondary">장바구니</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 상품 2 -->
-                    <div class="col-md-4">
-                        <div class="card">
-                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품2">
-                            <div class="card-body">
-                                <h5 class="card-title">상품 2</h5>
-                                <p class="card-text">상품 2에 대한 간단한 설명입니다.</p>
-                                <p class="card-text text-primary">₩ 30,000</p>
-                                <!-- 버튼 그룹 -->
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-primary">구매하기</a>
-                                    <a href="#" class="btn btn-secondary">장바구니</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 상품 3 -->
-                    <div class="col-md-4">
-                        <div class="card">
-                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품3">
-                            <div class="card-body">
-                                <h5 class="card-title">상품 3</h5>
-                                <p class="card-text">상품 3에 대한 간단한 설명입니다.</p>
-                                <p class="card-text text-primary">₩ 25,000</p>
-                                <!-- 버튼 그룹 -->
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-primary">구매하기</a>
-                                    <a href="#" class="btn btn-secondary">장바구니</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 상품 4 -->
-                    <div class="col-md-4">
-                        <div class="card">
-                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품4">
-                            <div class="card-body">
-                                <h5 class="card-title">상품 4</h5>
-                                <p class="card-text">상품 4에 대한 간단한 설명입니다.</p>
-                                <p class="card-text text-primary">₩ 40,000</p>
-                                <!-- 버튼 그룹 -->
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-primary">구매하기</a>
-                                    <a href="#" class="btn btn-secondary">장바구니</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 상품 5 -->
-                    <div class="col-md-4">
-                        <div class="card">
-                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품5">
-                            <div class="card-body">
-                                <h5 class="card-title">상품 5</h5>
-                                <p class="card-text">상품 5에 대한 간단한 설명입니다.</p>
-                                <p class="card-text text-primary">₩ 50,000</p>
-                                <!-- 버튼 그룹 -->
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-primary">구매하기</a>
-                                    <a href="#" class="btn btn-secondary">장바구니</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 상품 6 -->
-                    <div class="col-md-4">
-                        <div class="card">
-                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품6">
-                            <div class="card-body">
-                                <h5 class="card-title">상품 6</h5>
-                                <p class="card-text">상품 6에 대한 간단한 설명입니다.</p>
-                                <p class="card-text text-primary">₩ 60,000</p>
+                                <h5 class="card-title" th:text="${product.name}">상품 1</h5>
+                                <p class="card-text">이 상품은 박신사에서 관리하는 상품입니다.</p>
+                                <p class="card-text text-primary" th:text="${product.price + '원'}">0</p>
                                 <!-- 버튼 그룹 -->
                                 <div class="btn-group">
                                     <a href="#" class="btn btn-primary">구매하기</a>
@@ -144,16 +59,20 @@
                 <!-- 페이지 네비게이션 -->
                 <nav>
                     <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
+                        <li class="page-item" th:if="${page != 1}" th:onclick="'search(' + ${page - 1} + ');'">
+                            <a class="page-link" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
+                        <li class="page-item"
+                            th:classappend="${page == i} ? 'active' : ''"
+                            th:each="i : ${#numbers.sequence(firstPage, lastPage)}"
+                            th:onclick="'search(' + ${i} + ');'"
+                        >
+                            <a class="page-link">[[${i}]]</a>
+                        </li>
+                        <li class="page-item" th:if="${page != totalPages}" th:onclick="'search(' + ${page + 1} + ');'">
+                            <a class="page-link" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
@@ -162,6 +81,25 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function search(page) {
+            let queryString = '';
+
+            const searchText = $('#searchInput').val();
+            if (searchText) {
+                queryString = queryString ? '&' : '?';
+                queryString += 'searchText=' + searchText;
+            }
+
+            if (page) {
+                queryString = queryString ? '&' : '?';
+                queryString += 'page=' + page;
+            }
+
+            location.href = '/product/list' + queryString;
+        }
+    </script>
 </main>
 
 </body>
