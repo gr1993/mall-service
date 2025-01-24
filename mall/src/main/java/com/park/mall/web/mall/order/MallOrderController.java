@@ -7,7 +7,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MallOrderController {
 
     @GetMapping("/cart")
-    public String productView() {
+    public String cartView() {
         return "mall/order/cart";
+    }
+
+    @GetMapping("/orders/my")
+    public String myOrderView() {
+        return "mall/order/my";
+    }
+
+    @GetMapping("/payment")
+    public String paymentView() {
+        return "mall/order/payment";
     }
 }

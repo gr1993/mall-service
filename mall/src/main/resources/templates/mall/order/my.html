@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link})}"
+      lang="ko"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 상세</title>
+
+    <link rel="stylesheet" href="/css/mall/myorder.css" />
+</head>
+<body>
+
+<!-- 메인 컨텐츠 -->
+<main class="main-content container mt-4">
+    <!-- 주문 목록 페이지 내용 -->
+    <div class="container order-container">
+        <h2>주문 목록 확인</h2>
+
+        <!-- 주문 카드 시작 -->
+        <div class="order-card">
+            <div class="order-header">
+                <h4>#12345 - 스마트폰 세트</h4>
+                <span class="order-status status-completed">주문 완료</span>
+            </div>
+            <p class="order-details">주문 날짜: 2025-01-22 | 결제 총 금액: ₩950,000</p>
+            <div class="order-items">
+                <div class="order-item">
+                    <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
+                    <div class="item-details">
+                        <div class="item-name">스마트폰</div>
+                        <div class="item-quantity">수량: 1</div>
+                        <div class="item-price">₩950,000</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-details">상세 보기</button>
+        </div>
+
+        <div class="order-card">
+            <div class="order-header">
+                <h4>#12346 - 전자기기 세트</h4>
+                <span class="order-status status-completed">주문 완료</span>
+            </div>
+            <p class="order-details">주문 날짜: 2025-01-20 | 결제 총 금액: ₩190,000</p>
+            <div class="order-items">
+                <div class="order-item">
+                    <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
+                    <div class="item-details">
+                        <div class="item-name">무선 이어폰</div>
+                        <div class="item-quantity">수량: 2</div>
+                        <div class="item-price">₩95,000</div>
+                    </div>
+                </div>
+                <div class="order-item">
+                    <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
+                    <div class="item-details">
+                        <div class="item-name">블루투스 스피커</div>
+                        <div class="item-quantity">수량: 1</div>
+                        <div class="item-price">₩95,000</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-details">상세 보기</button>
+        </div>
+
+        <div class="order-card">
+            <div class="order-header">
+                <h4>#12347 - 게이밍 키보드 세트</h4>
+                <span class="order-status status-pending">결제 대기</span>
+            </div>
+            <p class="order-details">주문 날짜: 2025-01-19 | 결제 총 금액: ₩150,000</p>
+            <div class="order-items">
+                <div class="order-item">
+                    <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
+                    <div class="item-details">
+                        <div class="item-name">게이밍 키보드</div>
+                        <div class="item-quantity">수량: 1</div>
+                        <div class="item-price">₩150,000</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-details">상세 보기</button>
+        </div>
+        <!-- 주문 카드 끝 -->
+
+        <!-- 페이지네이션 -->
+        <div class="pagination-container">
+            <button class="pagination-button">이전</button>
+            <button class="pagination-button">다음</button>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

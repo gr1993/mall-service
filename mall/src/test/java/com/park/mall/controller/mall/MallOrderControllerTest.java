@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -29,6 +30,32 @@ public class MallOrderControllerTest {
     void cartView() throws Exception {
         //when
         ResultActions mvcAction = mockMvc.perform(get("/cart"));
+
+        //then
+        mvcAction
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    @WithMockUser
+    void myOrderView() throws Exception {
+        //when
+        ResultActions mvcAction = mockMvc.perform(get("/orders/my"));
+
+        //then
+        mvcAction
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    @WithMockUser
+    void paymentView() throws Exception {
+        //when
+        ResultActions mvcAction = mockMvc.perform(get("/payment"));
 
         //then
         mvcAction

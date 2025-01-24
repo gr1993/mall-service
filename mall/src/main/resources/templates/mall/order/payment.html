@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link})}"
+      lang="ko"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 상세</title>
+
+    <link rel="stylesheet" href="/css/mall/payment.css" />
+</head>
+<body>
+
+<!-- 메인 컨텐츠 -->
+<main class="main-content container mt-4">
+    <!-- 결제 페이지 내용 -->
+    <div class="content container payment-container">
+        <h2>결제 페이지</h2>
+        <p class="total-amount">결제할 금액: ₩85,000</p>
+        <form>
+            <label for="address" class="form-label">배송지 주소</label>
+            <input type="text" id="address" class="form-control" placeholder="주소를 입력하세요" required>
+
+            <label for="message" class="form-label">배송 요청 사항 (선택)</label>
+            <textarea id="message" class="form-control" rows="3" placeholder="예: 문 앞에 놓아주세요"></textarea>
+
+            <button type="submit" class="btn btn-primary btn-payment mt-3">결제하기</button>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>
