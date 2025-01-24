@@ -10,4 +10,9 @@ public class MallProductController {
     public String productView() {
         return "mall/product/list";
     }
+
+    @GetMapping("/product/detail")
+    public String productDetail() {
+        return "mall/product/detail";
+    }
 }

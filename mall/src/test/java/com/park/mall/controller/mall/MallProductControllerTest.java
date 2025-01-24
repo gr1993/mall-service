@@ -32,7 +32,19 @@ public class MallProductControllerTest {
         ResultActions mvcAction = mockMvc.perform(get("/product/list"));
 
         //then
-        MvcResult mvcResult = mvcAction
+        mvcAction
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    void productDetailView() throws Exception {
+        //when
+        ResultActions mvcAction = mockMvc.perform(get("/product/detail"));
+
+        //then
+        mvcAction
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
