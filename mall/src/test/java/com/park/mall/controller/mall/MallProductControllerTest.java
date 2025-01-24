@@ -3,6 +3,7 @@ package com.park.mall.controller.mall;
 import com.park.mall.config.SecurityConfig;
 import com.park.mall.security.AdminUserDetailsService;
 import com.park.mall.service.product.ProductService;
+import com.park.mall.service.product.dto.AdminProductDetail;
 import com.park.mall.service.product.dto.MallProductInfo;
 import com.park.mall.web.mall.product.MallProductController;
 import org.junit.jupiter.api.Test;
@@ -73,8 +74,20 @@ public class MallProductControllerTest {
 
     @Test
     void productDetailView() throws Exception {
+        //given
+        AdminProductDetail productDetail = new AdminProductDetail();
+        productDetail.setId(1L);
+        productDetail.setName("park");
+        productDetail.setPrice(1500);
+        productDetail.setMainImg("mainFile.jpg");
+        productDetail.setMainPath("/temp/mainFile.jpg");
+        productDetail.setDescImg("descFile.jpg");
+        productDetail.setDescPath("/temp/descFile.jpg");
+        Mockito.when(productService.getProductDetail(Mockito.any()))
+                .thenReturn(productDetail);
+
         //when
-        ResultActions mvcAction = mockMvc.perform(get("/product/detail"));
+        ResultActions mvcAction = mockMvc.perform(get("/product/detail?productId=1"));
 
         //then
         mvcAction

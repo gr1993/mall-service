@@ -3,6 +3,7 @@ package com.park.mall.web.mall.product;
 import com.park.mall.common.PageUtil;
 import com.park.mall.common.dto.PageInfo;
 import com.park.mall.service.product.ProductService;
+import com.park.mall.service.product.dto.AdminProductDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -58,7 +59,12 @@ public class MallProductController {
     }
 
     @GetMapping("/product/detail")
-    public String productDetail() {
+    public String productDetail(
+            @RequestParam(value = "productId") Long productId,
+            Model model
+    ) {
+        AdminProductDetail productDetail = productService.getProductDetail(productId);
+        model.addAttribute("productInfo", productDetail);
         return "mall/product/detail";
     }
 }
