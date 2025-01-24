@@ -1,0 +1,78 @@
+/* 사이드바 스타일 */
+.sidebar {
+    position: fixed;
+    top: 70px; /* 상단바 높이를 70px로 설정 */
+    left: 0;
+    height: calc(100% - 70px); /* 화면 전체 높이에서 상단바 크기만큼 제외 */
+    width: 250px;
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    padding-left: 20px;
+    z-index: 1000;
+    border-right: 2px solid #ccc; /* 사이드바 경계선 추가 */
+    overflow-y: auto; /* 스크롤 가능하게 처리 */
+}
+.sidebar a {
+    display: block;
+    padding: 12px;
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+}
+.sidebar a:hover {
+    background-color: #007bff;
+    color: white;
+}
+.sidebar h4 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* 상품 리스트와 카테고리의 간격 조정 */
+.content {
+    margin-left: 270px; /* 사이드바 너비만큼 여백 */
+}
+
+/* 상품 리스트 간격 및 줄 간격 조정 */
+.card {
+    margin-bottom: 30px; /* 상품 간 간격 */
+}
+
+/* 검색바 디자인 */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    margin-bottom: 40px; /* 상품과 간격을 띄움 */
+}
+.search-bar input {
+    width: 50%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+}
+.search-bar button {
+    padding: 12px 20px;
+    background-color: #28a745;
+    border: 1px solid #28a745;
+    border-radius: 0 5px 5px 0;
+    color: white;
+    font-size: 16px;
+}
+
+/* 상품 카드 내 버튼 크기 및 배치 조정 */
+.btn-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+.btn-group .btn {
+    width: 48%; /* 버튼을 좌우로 나누어 배치 */
+    font-size: 16px;
+}

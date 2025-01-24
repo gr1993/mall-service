@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link})}"
+      lang="ko"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 리스트</title>
+
+    <link rel="stylesheet" href="/css/mall/productList.css" />
+</head>
+<body>
+
+<!-- 메인 컨텐츠 -->
+<main class="main-content container mt-4">
+    <!-- 검색 바 -->
+    <div class="search-bar">
+        <input type="search" placeholder="검색어를 입력하세요" aria-label="Search">
+        <button type="submit">검색</button>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 사이드바 -->
+            <div class="col-md-3 sidebar">
+                <h4>카테고리</h4>
+                <a href="#">전자제품</a>
+                <a href="#">패션</a>
+                <a href="#">가전제품</a>
+                <a href="#">도서</a>
+                <a href="#">식품</a>
+                <a href="#">뷰티</a>
+                <a href="#">생활용품</a>
+                <a href="#">스포츠</a>
+            </div>
+
+            <!-- 상품 리스트 영역 -->
+            <div class="col-md-9 content">
+                <div class="row">
+                    <!-- 상품 1 -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품1">
+                            <div class="card-body">
+                                <h5 class="card-title">상품 1</h5>
+                                <p class="card-text">상품 1에 대한 간단한 설명입니다.</p>
+                                <p class="card-text text-primary">₩ 20,000</p>
+                                <!-- 버튼 그룹 -->
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-primary">구매하기</a>
+                                    <a href="#" class="btn btn-secondary">장바구니</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 2 -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품2">
+                            <div class="card-body">
+                                <h5 class="card-title">상품 2</h5>
+                                <p class="card-text">상품 2에 대한 간단한 설명입니다.</p>
+                                <p class="card-text text-primary">₩ 30,000</p>
+                                <!-- 버튼 그룹 -->
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-primary">구매하기</a>
+                                    <a href="#" class="btn btn-secondary">장바구니</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 3 -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품3">
+                            <div class="card-body">
+                                <h5 class="card-title">상품 3</h5>
+                                <p class="card-text">상품 3에 대한 간단한 설명입니다.</p>
+                                <p class="card-text text-primary">₩ 25,000</p>
+                                <!-- 버튼 그룹 -->
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-primary">구매하기</a>
+                                    <a href="#" class="btn btn-secondary">장바구니</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 4 -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품4">
+                            <div class="card-body">
+                                <h5 class="card-title">상품 4</h5>
+                                <p class="card-text">상품 4에 대한 간단한 설명입니다.</p>
+                                <p class="card-text text-primary">₩ 40,000</p>
+                                <!-- 버튼 그룹 -->
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-primary">구매하기</a>
+                                    <a href="#" class="btn btn-secondary">장바구니</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 5 -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품5">
+                            <div class="card-body">
+                                <h5 class="card-title">상품 5</h5>
+                                <p class="card-text">상품 5에 대한 간단한 설명입니다.</p>
+                                <p class="card-text text-primary">₩ 50,000</p>
+                                <!-- 버튼 그룹 -->
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-primary">구매하기</a>
+                                    <a href="#" class="btn btn-secondary">장바구니</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 6 -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" class="card-img-top" alt="상품6">
+                            <div class="card-body">
+                                <h5 class="card-title">상품 6</h5>
+                                <p class="card-text">상품 6에 대한 간단한 설명입니다.</p>
+                                <p class="card-text text-primary">₩ 60,000</p>
+                                <!-- 버튼 그룹 -->
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-primary">구매하기</a>
+                                    <a href="#" class="btn btn-secondary">장바구니</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 페이지 네비게이션 -->
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

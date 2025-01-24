@@ -1,0 +1,14 @@
+html, body {
+    height: 100%; /* 전체 높이를 100%로 설정 */
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column; /* 수직 정렬 */
+}
+
+.main-content {
+    flex: 1; /* 콘텐츠 영역을 확장하여 남는 공간 차지 */
+    padding: 50px;
+}

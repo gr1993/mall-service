@@ -1,4 +1,4 @@
-package com.park.mall.controller;
+package com.park.mall.controller.admin;
 
 import com.park.mall.config.SecurityConfig;
 import com.park.mall.security.AdminUserDetailsService;
