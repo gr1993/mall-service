@@ -5,6 +5,7 @@ import com.park.mall.security.AdminUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,8 +21,9 @@ public class SecurityConfig {
     private AdminUserDetailsService adminUserDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    @Order(1)
+    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/admin/**") // admin 경로만 처리
             .formLogin(form -> {
                 form.loginPage("/admin/login")
                     .loginProcessingUrl("/admin/login")
@@ -40,21 +42,43 @@ public class SecurityConfig {
                             "/admin/logout",
                             "/admin/file/**"
                     ).permitAll()
-                    .requestMatchers("/admin/**").hasAnyRole("admin")
-                    .requestMatchers(
-                            "/",
-                            "/login",
-                            "/register",
-                            "/product/**",
-                            "/cart"
-                    ).permitAll()
-                    .requestMatchers(
-                            "/css/**",
-                            "/js/**",
-                            "/img/**",
-                            "/error"
-                    ).permitAll()
-                    .anyRequest().authenticated();
+                    .anyRequest().hasRole("admin");
+            });
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain mallSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .formLogin(form -> {
+                form.loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/", true)
+                        .failureHandler(new AdminAuthenticationFailureHandler());
+            })
+            .logout(logout -> {
+                logout.logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .deleteCookies("JSESSIONID", "remember-me");
+            })
+            .authorizeHttpRequests(authorizeRequests -> {
+                authorizeRequests
+                        .requestMatchers(
+                                "/",
+                                "/login",
+                                "/register",
+                                "/product/**",
+                                "/cart"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/css/**",
+                                "/js/**",
+                                "/img/**",
+                                "/error"
+                        ).permitAll()
+                        .anyRequest().authenticated();
             });
 
         return http.build();
