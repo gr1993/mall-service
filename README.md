@@ -10,13 +10,16 @@ Spring Boot 기술들을 학습하기 위해 만들었으며 온라인 쇼핑몰
 * Spring Security
 * JPA + Querydsl
 * mysql connector
+* Thymeleaf
 * Jasypt : 설정 파일 보안 적용 (jasyptKey : mypasswordkey)
 * validation : hibernate.validator
+* test
+	* spring-boot-starter-test (junit5, Mockito, MockMvc)
+	* spring-security-test (@WithMockUser, csrf())
 
 
 ## 프론트엔드 기술
 
-* Thymeleaf
 * Bootstrap 5
 * JQuery 3.7.1
 * grid 라이브러리
