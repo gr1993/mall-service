@@ -152,4 +152,23 @@ public class ProductService {
         productDetail.setDescPath(productImg.getDescImgPath());
         return productDetail;
     }
+
+    public List<AdminProductDetail> getProductDetailList(List<Long> ids) {
+        List<Product> products = productJpaRepository.findAllByIdsWithProductImgs(ids);
+
+        List<AdminProductDetail> productDetails = new ArrayList<>();
+        for (Product product : products) {
+            ProductImg productImg = product.getProductImgs().get(0);
+            AdminProductDetail productDetail = new AdminProductDetail();
+            productDetail.setId(product.getId());
+            productDetail.setName(product.getName());
+            productDetail.setPrice(product.getPrice());
+            productDetail.setMainImg(productImg.getMainImgName());
+            productDetail.setMainPath(productImg.getMainImgPath());
+            productDetail.setDescImg(productImg.getDescImgName());
+            productDetail.setDescPath(productImg.getDescImgPath());
+            productDetails.add(productDetail);
+        }
+        return productDetails;
+    }
 }

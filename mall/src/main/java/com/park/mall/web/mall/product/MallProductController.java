@@ -13,7 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -66,5 +69,17 @@ public class MallProductController {
         AdminProductDetail productDetail = productService.getProductDetail(productId);
         model.addAttribute("productInfo", productDetail);
         return "mall/product/detail";
+    }
+
+    @GetMapping("/products/info")
+    @ResponseBody
+    public Map<String, Object> productsInfo(
+            @RequestParam(value = "productIdArr") Long[] productIdArr
+    ) {
+        List<AdminProductDetail> productDetails = productService.getProductDetailList(List.of(productIdArr));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", productDetails);
+        return response;
     }
 }

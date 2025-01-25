@@ -95,4 +95,20 @@ public class MallProductControllerTest {
                 .andDo(print())
                 .andReturn();
     }
+
+    @Test
+    void productsInfo() throws Exception {
+        //given
+        Mockito.when(productService.getProductDetailList(Mockito.any()))
+                .thenReturn(List.of());
+
+        //when
+        ResultActions mvcAction = mockMvc.perform(get("/products/info?productIdArr=1,2,3"));
+
+        //then
+        mvcAction
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+    }
 }

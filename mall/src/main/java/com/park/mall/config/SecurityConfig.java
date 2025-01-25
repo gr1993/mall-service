@@ -70,6 +70,7 @@ public class SecurityConfig {
                                 "/login",
                                 "/register",
                                 "/product/**",
+                                "/products/**",
                                 "/cart"
                         ).permitAll()
                         .requestMatchers(

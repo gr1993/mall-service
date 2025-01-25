@@ -221,6 +221,23 @@ public class ProductServiceTest {
         Assertions.assertEquals(productImg.getDescImgName(), productDetail.getDescImg());
     }
 
+    @Test
+    void getProductDetailList() {
+        //given
+        Product product1 = getMockProduct("park1", 1000);
+        Product product2 = getMockProduct("park2", 2000);
+        productJpaRepository.save(product1);
+        productJpaRepository.save(product2);
+
+        //when
+        List<AdminProductDetail> adminProductDetails = productService.getProductDetailList(List.of(product1.getId(), product2.getId()));
+
+        //then
+        Assertions.assertEquals(2, adminProductDetails.size());
+
+        productJpaRepository.deleteAll(List.of(product1, product2));
+    }
+
     private Product addProduct(String name, Integer price) {
         Product newProduct = new Product();
         newProduct.setName(name);
@@ -228,5 +245,22 @@ public class ProductServiceTest {
         newProduct.getCreateInfo().setCreateId("manager");
         newProduct.getUpdateInfo().setModifyId("owner");
         return productJpaRepository.save(newProduct);
+    }
+
+    private Product getMockProduct(String name, Integer price) {
+        Product newProduct = new Product();
+        newProduct.setName(name);
+        newProduct.setPrice(price);
+        newProduct.getCreateInfo().setCreateId("manager");
+        newProduct.getUpdateInfo().setModifyId("owner");
+        ProductImg newProductImg = new ProductImg();
+        newProductImg.setProduct(newProduct);
+        newProductImg.setMainImgName("mainFile.jpg");
+        newProductImg.setMainImgPath("/temp/mainFile.jpg");
+        newProductImg.setDescImgName("descFile.jpg");
+        newProductImg.setDescImgPath("/temp/descFile.jpg");
+        newProduct.getProductImgs().add(newProductImg);
+        return newProduct;
+
     }
 }
