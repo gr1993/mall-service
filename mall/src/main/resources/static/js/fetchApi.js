@@ -1,8 +1,36 @@
+async function fetchGet({ url, headers, success, fail }) {
+    try {
+        showSpinner();
+
+        const option = { method: "GET" };
+        if (headers) {
+            option.headers = headers;
+        }
+
+        const response = await fetch(url, option);
+
+        hideSpinner();
+        if (response.ok) {
+            if (success) {
+                success(response);
+            }
+        } else {
+            if (fail) {
+                fail(response);
+            }
+        }
+    } catch (error) {
+        hideSpinner();
+        console.error("요청 오류:", error);
+        alert("요청 중 오류가 발생했습니다.");
+    }
+}
+
 async function fetchPost({ url, data, headers, success, fail, simpleForm }) {
     try {
         showSpinner();
 
-        const option = { method: "POST" }
+        const option = { method: "POST" };
         if (headers) {
             option.headers = headers;
         } else {

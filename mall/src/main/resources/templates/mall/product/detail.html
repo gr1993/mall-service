@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link})}"
+      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link}, null)}"
       lang="ko"
 >
 <head>
@@ -35,7 +35,7 @@
             <p id="totalPrice" class="total-price" th:text="'총 금액: ' + ${#numbers.formatInteger(productInfo.price, 0, 'COMMA')} + '원'"></p>
             <div class="mt-3">
                 <button class="btn btn-primary btn-lg me-2">구매하기</button>
-                <button class="btn btn-secondary btn-lg">장바구니</button>
+                <button class="btn btn-secondary btn-lg" onclick="addInCart();">장바구니</button>
             </div>
         </div>
     </div>
@@ -56,6 +56,12 @@
 
                 $('#totalPrice').text('총 금액: ' + formattedPrice + '원');
             }
+        }
+
+        function addInCart() {
+            const id = $('#productId').val();
+            const quantity = $('#quantity').val();
+            cart.addProductInCart({ id: Number(id), quantity: Number(quantity) });
         }
     </script>
 </main>

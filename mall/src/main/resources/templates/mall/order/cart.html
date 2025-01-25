@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link})}"
+      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link}, ~{::script})}"
       lang="ko"
 >
 <head>
@@ -15,29 +15,97 @@
 <!-- 메인 컨텐츠 -->
 <main class="main-content container mt-4">
     <h1>장바구니</h1>
-    <div class="cart-item">
-        <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
-        <div class="item-info">
-            <h5>상품명 1</h5>
-            <p class="price">₩35,000</p>
-        </div>
-        <input type="number" class="form-control quantity-selector" value="1" min="1" onchange="updateCartTotal()">
-    </div>
-    <div class="cart-item">
-        <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
-        <div class="item-info">
-            <h5>상품명 2</h5>
-            <p class="price">₩50,000</p>
-        </div>
-        <input type="number" class="form-control quantity-selector" value="1" min="1" onchange="updateCartTotal()">
+    <div id="cart-item-list">
+
     </div>
 
     <!-- 장바구니 합계 -->
     <div class="cart-summary">
-        <p class="total-price" id="cart-total">총 금액: ₩85,000</p>
-        <button class="btn btn-primary btn-lg mt-3">주문하기</button>
+        <p class="total-price" id="cart-total">총 금액 : 0원</p>
+        <button class="btn btn-primary btn-lg mt-3" onclick="location.href='/payment'">주문하기</button>
     </div>
 </main>
+
+<script>
+    var productPriceInfo = {};
+
+    $(function() {
+        loadProductList();
+    });
+
+    async function loadProductList() {
+        const idArr = cart.getProductsInCart().map(p => p.id);
+
+        fetchGet({
+            url : '/products/info?productIdArr=' + idArr.join(','),
+            success : async function(response) {
+                const res = await response.json();
+                const productList = res.data;
+
+                let template = '';
+                for (let i = 0; i < productList.length; i++) {
+                    const productInfo = productList[i];
+                    const cartInfo = cart.getProductsInCart().find(p => p.id === productInfo.id);
+                    productPriceInfo[productInfo.id] = productInfo.price;
+
+                    template += `
+                        <div class="cart-item">
+                            <img src="/admin/file/download?filePath=${productInfo.mainPath}" alt="상품 이미지">
+                            <div class="item-info">
+                                <h5>${productInfo.name}</h5>
+                                <p class="price">${new Intl.NumberFormat('ko-KR').format(productInfo.price)}원</p>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <input type="number" class="form-control quantity-selector me-2" value="${cartInfo.quantity}" min="1" onchange="updateCartItem(this, ${productInfo.id});">
+                                <button class="btn btn-outline-danger btn-sm" onclick="removeCartItem(this, ${productInfo.id})">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 상품 목록 표시
+                $('#cart-item-list').html(template);
+
+                // 총 금액 표시
+                calculateTotalPrice();
+            },
+            fail : async function(response) {
+
+            }
+        });
+    }
+
+    function calculateTotalPrice() {
+        const cartList = cart.getProductsInCart();
+        let totalPrice = 0;
+
+        for(let i = 0; i < cartList.length; i++) {
+            const cartInfo = cartList[i];
+            totalPrice += productPriceInfo[cartInfo.id] * cartInfo.quantity;
+        }
+
+        const totalPriceText = new Intl.NumberFormat('ko-KR').format(totalPrice);
+        $('#cart-total').text('총 금액 : ' + totalPriceText + '원');
+    }
+
+    function removeCartItem(delBtn, productId) {
+        cart.removeProductInCart(productId);
+
+        $(delBtn).closest('.cart-item').remove();
+
+        calculateTotalPrice();
+    }
+
+    function updateCartItem(quantityInput, productId) {
+        const quantity = Number(quantityInput.value);
+
+        cart.addProductInCart({ id: productId, quantity, noToast: true })
+
+        calculateTotalPrice();
+    }
+</script>
 
 </body>
 </html>

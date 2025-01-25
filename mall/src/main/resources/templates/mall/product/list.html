@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link})}"
+      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link}, null)}"
       lang="ko"
->
+>   
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,7 +49,7 @@
                                 <!-- 버튼 그룹 -->
                                 <div class="btn-group">
                                     <a th:href="'/product/detail?productId=' + ${product.id}" class="btn btn-primary" target="_blank">구매하기</a>
-                                    <a href="#" class="btn btn-secondary">장바구니</a>
+                                    <a class="btn btn-secondary" th:onclick="'addInCart(' + ${product.id} + ')'">장바구니</a>
                                 </div>
                             </div>
                         </div>
@@ -98,6 +98,10 @@
             }
 
             location.href = '/product/list' + queryString;
+        }
+
+        function addInCart(id) {
+            cart.addProductInCart({ id, quantity: 1 });
         }
     </script>
 </main>
