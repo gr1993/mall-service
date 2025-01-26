@@ -2,6 +2,7 @@ package com.park.mall.controller.mall;
 
 import com.park.mall.config.SecurityConfig;
 import com.park.mall.security.AdminUserDetailsService;
+import com.park.mall.security.MemberUserDetailsService;
 import com.park.mall.service.product.ProductService;
 import com.park.mall.service.product.dto.AdminProductDetail;
 import com.park.mall.service.product.dto.MallProductInfo;
@@ -35,6 +36,9 @@ public class MallProductControllerTest {
 
     @MockitoBean
     private AdminUserDetailsService adminUserDetailsService;
+
+    @MockitoBean
+    private MemberUserDetailsService memberUserDetailsService;
 
     @MockitoBean
     private ProductService productService;

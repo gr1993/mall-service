@@ -3,6 +3,7 @@ package com.park.mall.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.park.mall.config.SecurityConfig;
 import com.park.mall.security.AdminUserDetailsService;
+import com.park.mall.security.MemberUserDetailsService;
 import com.park.mall.service.file.FileService;
 import com.park.mall.web.admin.file.FileController;
 import org.junit.jupiter.api.Assertions;
@@ -36,10 +37,13 @@ public class FileControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private FileService fileService;
+    private AdminUserDetailsService adminUserDetailsService;
 
     @MockitoBean
-    private AdminUserDetailsService adminUserDetailsService;
+    private MemberUserDetailsService memberUserDetailsService;
+
+    @MockitoBean
+    private FileService fileService;
 
     private MockMultipartFile multipartFile;
 

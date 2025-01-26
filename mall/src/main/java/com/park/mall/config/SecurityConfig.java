@@ -1,7 +1,9 @@
 package com.park.mall.config;
 
+import com.park.mall.domain.member.Member;
 import com.park.mall.security.AdminAuthenticationFailureHandler;
 import com.park.mall.security.AdminUserDetailsService;
+import com.park.mall.security.MemberUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,9 @@ public class SecurityConfig {
 
     @Autowired
     private AdminUserDetailsService adminUserDetailsService;
+
+    @Autowired
+    private MemberUserDetailsService memberUserDetailsService;
 
     @Bean
     @Order(1)
@@ -92,6 +97,12 @@ public class SecurityConfig {
         adminAuthProvider.setUserDetailsService(adminUserDetailsService);
         adminAuthProvider.setPasswordEncoder(passwordEncoder());
         auth.authenticationProvider(adminAuthProvider);
+
+        DaoAuthenticationProvider memberAuthProvider = new DaoAuthenticationProvider();
+        memberAuthProvider.setUserDetailsService(memberUserDetailsService);
+        memberAuthProvider.setPasswordEncoder(passwordEncoder());
+        auth.authenticationProvider(memberAuthProvider);
+
         return auth.build();
     }
 

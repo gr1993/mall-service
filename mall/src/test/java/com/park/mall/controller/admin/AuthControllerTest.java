@@ -2,6 +2,7 @@ package com.park.mall.controller.admin;
 
 import com.park.mall.config.SecurityConfig;
 import com.park.mall.security.AdminUserDetailsService;
+import com.park.mall.security.MemberUserDetailsService;
 import com.park.mall.web.admin.auth.AuthController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class AuthControllerTest {
 
     @MockitoBean
     private AdminUserDetailsService adminUserDetailsService;
+
+    @MockitoBean
+    private MemberUserDetailsService memberUserDetailsService;
 
     @Test
     void login() throws Exception {

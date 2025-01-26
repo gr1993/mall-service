@@ -2,6 +2,7 @@ package com.park.mall.controller.admin;
 
 import com.park.mall.config.SecurityConfig;
 import com.park.mall.security.AdminUserDetailsService;
+import com.park.mall.security.MemberUserDetailsService;
 import com.park.mall.service.product.ProductService;
 import com.park.mall.service.product.dto.AdminProductDetail;
 import com.park.mall.web.admin.product.ProductController;
@@ -31,10 +32,13 @@ public class ProductControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private ProductService productService;
+    private AdminUserDetailsService adminUserDetailsService;
 
     @MockitoBean
-    private AdminUserDetailsService adminUserDetailsService;
+    private MemberUserDetailsService memberUserDetailsService;
+
+    @MockitoBean
+    private ProductService productService;
 
     @Test
     @WithMockUser(roles = "admin")
