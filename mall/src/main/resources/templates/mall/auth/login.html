@@ -50,7 +50,8 @@
               data : formData,
               simpleForm : true,
               success : async function(response) {
-                alert("로그인에 성공");
+                const res = await response.json();
+                location.href = res.redirectUrl;
               },
               fail : async function(response) {
                 alert("[[#{admin.login}]]");

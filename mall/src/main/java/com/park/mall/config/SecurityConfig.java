@@ -1,8 +1,8 @@
 package com.park.mall.config;
 
-import com.park.mall.domain.member.Member;
-import com.park.mall.security.AdminAuthenticationFailureHandler;
+import com.park.mall.security.CustomAuthenticationFailureHandler;
 import com.park.mall.security.AdminUserDetailsService;
+import com.park.mall.security.CustomAuthenticationSuccessHandler;
 import com.park.mall.security.MemberUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +33,7 @@ public class SecurityConfig {
                 form.loginPage("/admin/login")
                     .loginProcessingUrl("/admin/login")
                     .defaultSuccessUrl("/admin/main", true)
-                    .failureHandler(new AdminAuthenticationFailureHandler());
+                    .failureHandler(new CustomAuthenticationFailureHandler());
             })
             .logout(logout -> {
                 logout.logoutUrl("/admin/logout")
@@ -61,7 +61,8 @@ public class SecurityConfig {
                 form.loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/", true)
-                        .failureHandler(new AdminAuthenticationFailureHandler());
+                        .successHandler(new CustomAuthenticationSuccessHandler())
+                        .failureHandler(new CustomAuthenticationFailureHandler());
             })
             .logout(logout -> {
                 logout.logoutUrl("/logout")
