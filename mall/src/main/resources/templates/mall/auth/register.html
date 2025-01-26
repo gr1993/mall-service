@@ -20,31 +20,115 @@
         <form>
             <div class="mb-3">
                 <label for="name" class="form-label">이름</label>
-                <input type="text" class="form-control" id="name" placeholder="이름을 입력하세요" required>
+                <input type="text" class="form-control" id="name" placeholder="이름을 입력하세요">
+                <div id="nameError" class="error-message"></div>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">이메일</label>
-                <input type="email" class="form-control" id="email" placeholder="이메일을 입력하세요" required>
+                <input type="email" class="form-control" id="email" placeholder="이메일을 입력하세요">
+                <div id="emailError" class="error-message"></div>
             </div>
             <div class="mb-3">
                 <label for="username" class="form-label">아이디</label>
-                <input type="text" class="form-control" id="username" placeholder="아이디를 입력하세요" required>
+                <input type="text" class="form-control" id="username" placeholder="아이디를 입력하세요">
+                <div id="usernameError" class="error-message"></div>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">비밀번호</label>
-                <input type="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요" required>
+                <input type="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요">
+                <div id="passwordError" class="error-message"></div>
             </div>
             <div class="mb-3">
-                <label for="confirm-password" class="form-label">비밀번호 확인</label>
-                <input type="password" class="form-control" id="confirm-password" placeholder="비밀번호를 확인하세요" required>
+                <label for="confirmPassword" class="form-label">비밀번호 확인</label>
+                <input type="password" class="form-control" id="confirmPassword" placeholder="비밀번호를 확인하세요">
+                <div id="confirmPasswordError" class="error-message"></div>
             </div>
-            <button type="submit" class="btn-signup">회원가입</button>
+            <button type="button" class="btn-signup" onclick="register();">회원가입</button>
         </form>
 
         <div class="text-center">
             <p>이미 계정이 있으신가요? <a href="login.html">로그인</a></p>
         </div>
     </div>
+
+    <script>
+        function register() {
+            if (confirm('[[#{member.register.before}]]')) {
+                const nameInput = document.getElementById("name");
+                const emailInput = document.getElementById("email");
+                const usernameInput = document.getElementById("username");
+                const passwordInput = document.getElementById("password");
+                const confirmPasswordInput = document.getElementById("confirmPassword");
+
+                const nameError = document.getElementById("nameError");
+                const emailError = document.getElementById("emailError");
+                const usernameError = document.getElementById("usernameError");
+                const passwordError = document.getElementById("passwordError");
+                const confirmPasswordError = document.getElementById("confirmPasswordError");
+
+                // 초기화
+                nameError.textContent = "";
+                emailError.textContent = "";
+                usernameError.textContent = "";
+                passwordError.textContent = "";
+                confirmPasswordError.textContent = "";
+                nameInput.classList.remove("error-border");
+                emailInput.classList.remove("error-border");
+                usernameInput.classList.remove("error-border");
+                passwordInput.classList.remove("error-border");
+                confirmPasswordInput.classList.remove("error-border");
+
+                const csrfToken = $("meta[name='_csrf']").attr("content");
+                const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+                fetchPost({
+                    url : '/register',
+                    headers : {
+                        [csrfHeader] : csrfToken
+                    },
+                    data : {
+                        name : nameInput.value,
+                        email : emailInput.value,
+                        id : usernameInput.value,
+                        password : passwordInput.value,
+                        confirmPassword : confirmPasswordInput.value,
+                    },
+                    success : async function(response) {
+                        alert("[[#{member.register.complete}]]");
+                        location.href = '/login';
+                    },
+                    fail : async function(response) {
+                        const res = await response.json();
+
+                        for (let i = 0; i < res.length; i++) {
+                            const split = res[i].split(':');
+
+                            if (split[0] === 'name') {
+                                nameError.textContent = split[1];
+                                nameInput.classList.add("error-border");
+                            }
+                            if (split[0] === 'email') {
+                                emailError.textContent = split[1];
+                                emailInput.classList.add("error-border");
+                            }
+                            if (split[0] === 'id') {
+                                usernameError.textContent = split[1];
+                                usernameInput.classList.add("error-border");
+                            }
+                            if (split[0] === 'password') {
+                                passwordError.textContent = split[1];
+                                passwordInput.classList.add("error-border");
+                            }
+                            if (split[0] === 'confirmPassword') {
+                                confirmPasswordError.textContent = split[1];
+                                confirmPasswordInput.classList.add("error-border");
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
 </main>
 
 </body>
