@@ -118,11 +118,16 @@ public class ProductControllerTest {
     @WithMockUser(roles = "admin")
     void productRegisterNoBody() throws Exception {
         //when
-        ResultActions mvcAction = mockMvc.perform(post("/admin/product/register"));
+        ResultActions mvcAction = mockMvc.perform(
+                post("/admin/product/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}")
+                        .with(csrf())
+        );
 
         //then
         MvcResult mvcResult = mvcAction
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andReturn();
 
         System.out.println(mvcResult.getResponse().getContentAsString());
@@ -131,16 +136,25 @@ public class ProductControllerTest {
     @Test
     @WithMockUser(roles = "admin")
     void productRegisterInvalidValue() throws Exception {
+        //given
+        String jsonRequest = """
+        {
+            "name": "A",
+            "price": "0"
+        }
+        """;
+
         //when
         ResultActions mvcAction = mockMvc.perform(
                 post("/admin/product/register")
-                .param("name", "A")
-                .param("price", "0")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .with(csrf())
         );
 
         //then
         MvcResult mvcResult = mvcAction
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andReturn();
 
         System.out.println(mvcResult.getResponse().getContentAsString());
