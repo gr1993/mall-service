@@ -35,7 +35,7 @@
             <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> 장바구니</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
+            <a class="nav-link" href="#" onclick="logout();"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
           </li>
         </ul>
 
@@ -49,6 +49,27 @@
         </ul>
       </div>
     </div>
+
+    <script>
+      function logout() {
+        const csrfToken = $("meta[name='_csrf']").attr("content");
+        const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+        fetchPost({
+          url : '/logout',
+          headers : {
+            [csrfHeader] : csrfToken
+          },
+          success : async function(response) {
+            document.cookie = "JSESSIONID=; path=/; domain=" + window.location.hostname + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            alert('로그아웃이 완료되었습니다.');
+            location.reload();
+          },
+          fail : async function(response) {
+          }
+        });
+      }
+    </script>
   </nav>
 </body>
 </html>
