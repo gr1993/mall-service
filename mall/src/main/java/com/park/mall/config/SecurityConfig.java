@@ -93,6 +93,9 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
+        // 인증 실패에도 계속 반복 인증하는 문제 해결 설정
+        auth.parentAuthenticationManager(null);
+
         DaoAuthenticationProvider adminAuthProvider = new DaoAuthenticationProvider();
         adminAuthProvider.setUserDetailsService(adminUserDetailsService);
         adminAuthProvider.setPasswordEncoder(passwordEncoder());
