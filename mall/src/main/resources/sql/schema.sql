@@ -30,3 +30,15 @@ CREATE TABLE IF NOT EXISTS `parksinsa`.`admin` (
   `name` VARCHAR(100) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `parksinsa`.`member` (
+  `id` VARCHAR(100) NOT NULL,
+  `password` VARCHAR(512) NULL,
+  `name` VARCHAR(100) NULL,
+  `email` VARCHAR(200) NULL,
+  `created_dtm` DATETIME NULL,
+  `create_id` VARCHAR(45) NULL,
+  `modified_dtm` DATETIME NULL,
+  `modify_id` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
