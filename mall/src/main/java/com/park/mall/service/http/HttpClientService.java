@@ -1,5 +1,6 @@
 package com.park.mall.service.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class HttpClientService implements MyHttpClient {
 
     @Override
@@ -27,7 +29,7 @@ public class HttpClientService implements MyHttpClient {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            errorHandle(response.statusCode());
+            errorHandle(response);
             return response.body();
         } catch (InterruptedException | IOException ex) {
             throw new RuntimeException(ex);
@@ -49,16 +51,17 @@ public class HttpClientService implements MyHttpClient {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            errorHandle(response.statusCode());
+            errorHandle(response);
             return response.body();
         } catch (InterruptedException | IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private void errorHandle(int statusCode) {
-        if (statusCode >= 400) {
-            throw new RuntimeException("http error code : " + statusCode);
+    private void errorHandle(HttpResponse<String> response) {
+        if (response.statusCode() >= 400) {
+            log.error("bootpay error : " + response.body());
+            throw new RuntimeException("http status code : " + response.statusCode());
         }
     }
 }
