@@ -14,8 +14,7 @@ import java.util.List;
 public class Orders {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
@@ -43,7 +42,7 @@ public class Orders {
     private LocalDateTime cancelDate;
 
     @OneToMany(
-            mappedBy = "orders",
+            mappedBy = "ordersId",
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )

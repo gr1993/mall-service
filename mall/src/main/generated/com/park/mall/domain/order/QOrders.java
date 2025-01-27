@@ -28,7 +28,7 @@ public class QOrders extends EntityPathBase<Orders> {
 
     public final EnumPath<com.park.mall.domain.common.CodeYn> cancelYn = createEnum("cancelYn", com.park.mall.domain.common.CodeYn.class);
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final StringPath id = createString("id");
 
     public final com.park.mall.domain.member.QMember member;
 

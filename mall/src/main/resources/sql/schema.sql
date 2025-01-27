@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `parksinsa`.`member` (
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `parksinsa`.`orders` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` VARCHAR(50) NOT NULL,
   `member_id` VARCHAR(100) NOT NULL,
   `address` VARCHAR(1000) NULL,
   `status` VARCHAR(3) NULL,
@@ -64,22 +64,22 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `parksinsa`.`order_details` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `orders_id` INT NOT NULL,
+  `orders_id` VARCHAR(50) NOT NULL,
   `product_id` INT NOT NULL,
   `product_name` VARCHAR(200) NULL,
   `price` INT NULL,
   `quantity` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_order_details_orders1_idx` (`orders_id` ASC) VISIBLE,
   INDEX `fk_order_details_product1_idx` (`product_id` ASC) VISIBLE,
-  CONSTRAINT `fk_order_details_orders1`
-    FOREIGN KEY (`orders_id`)
-    REFERENCES `parksinsa`.`orders` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+  INDEX `fk_order_details_orders1_idx` (`orders_id` ASC) VISIBLE,
   CONSTRAINT `fk_order_details_product1`
     FOREIGN KEY (`product_id`)
     REFERENCES `parksinsa`.`product` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_details_orders1`
+    FOREIGN KEY (`orders_id`)
+    REFERENCES `parksinsa`.`orders` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

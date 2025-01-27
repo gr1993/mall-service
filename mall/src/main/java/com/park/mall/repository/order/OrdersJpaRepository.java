@@ -7,8 +7,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface OrdersJpaRepository extends JpaRepository<Orders, Long> {
+public interface OrdersJpaRepository extends JpaRepository<Orders, String> {
 
     @Query("SELECT o FROM Orders o LEFT JOIN FETCH o.orderDetails WHERE o.id = :id")
-    Optional<Orders> findByIdWithOrderDetails(@Param("id") Long id);
+    Optional<Orders> findByIdWithOrderDetails(@Param("id") String id);
 }

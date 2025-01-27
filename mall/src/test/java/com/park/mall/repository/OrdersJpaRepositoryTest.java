@@ -1,5 +1,6 @@
 package com.park.mall.repository;
 
+import com.park.mall.common.IdUtil;
 import com.park.mall.domain.common.CodeYn;
 import com.park.mall.domain.member.Member;
 import com.park.mall.domain.order.OrderDetails;
@@ -58,6 +59,7 @@ public class OrdersJpaRepositoryTest {
     @BeforeEach
     public void setup() {
         orders = new Orders();
+        orders.setId(IdUtil.generateOrderId());
         orders.setMember(member);
         orders.setAddress("서울시 구로구 디지털로 00길 00");
         orders.setStatus(Status.PREPARE);
@@ -67,21 +69,18 @@ public class OrdersJpaRepositoryTest {
         orders.setCancelYn(CodeYn.N);
 
         OrderDetails orderDetails1 = new OrderDetails();
-        orderDetails1.setOrders(orders);
+        orderDetails1.setOrdersId(orders.getId());
         orderDetails1.setProduct(productList.get(0));
         orderDetails1.setProductName(productList.get(0).getName());
         orderDetails1.setPrice(productList.get(0).getPrice());
         orderDetails1.setQuantity(1);
 
         OrderDetails orderDetails2 = new OrderDetails();
-        orderDetails2.setOrders(orders);
+        orderDetails2.setOrdersId(orders.getId());
         orderDetails2.setProduct(productList.get(1));
         orderDetails2.setProductName(productList.get(1).getName());
         orderDetails2.setPrice(productList.get(1).getPrice());
         orderDetails2.setQuantity(2);
-
-        orders.getOrderDetails().add(orderDetails1);
-        orders.getOrderDetails().add(orderDetails2);
     }
 
     @Test
