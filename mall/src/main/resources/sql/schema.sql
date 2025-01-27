@@ -42,3 +42,44 @@ CREATE TABLE IF NOT EXISTS `parksinsa`.`member` (
   `modify_id` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `parksinsa`.`orders` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `member_id` VARCHAR(100) NOT NULL,
+  `address` VARCHAR(1000) NULL,
+  `status` VARCHAR(3) NULL,
+  `pay_type` VARCHAR(3) NULL,
+  `pay_amount` INT NULL,
+  `pay_date` DATETIME NULL,
+  `cancel_yn` CHAR(2) NULL,
+  `cancel_date` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Orders_member1_idx` (`member_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Orders_member1`
+    FOREIGN KEY (`member_id`)
+    REFERENCES `parksinsa`.`member` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `parksinsa`.`order_details` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `orders_id` INT NOT NULL,
+  `product_id` INT NOT NULL,
+  `product_name` VARCHAR(200) NULL,
+  `price` INT NULL,
+  `quantity` INT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_order_details_orders1_idx` (`orders_id` ASC) VISIBLE,
+  INDEX `fk_order_details_product1_idx` (`product_id` ASC) VISIBLE,
+  CONSTRAINT `fk_order_details_orders1`
+    FOREIGN KEY (`orders_id`)
+    REFERENCES `parksinsa`.`orders` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_details_product1`
+    FOREIGN KEY (`product_id`)
+    REFERENCES `parksinsa`.`product` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
