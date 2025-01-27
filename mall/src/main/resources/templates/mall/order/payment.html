@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link}, null)}"
+      th:replace="~{mall/layout/layout :: layout(~{::title},~{::main}, ~{::link}, ~{::script})}"
       lang="ko"
 >
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상품 상세</title>
+    <title>결제</title>
 
     <link rel="stylesheet" href="/css/mall/payment.css" />
 </head>
@@ -17,18 +17,97 @@
     <!-- 결제 페이지 내용 -->
     <div class="content container payment-container">
         <h2>결제 페이지</h2>
-        <p class="total-amount">결제할 금액: ₩85,000</p>
+        <p class="total-amount">결제할 금액: </p>
         <form>
             <label for="address" class="form-label">배송지 주소</label>
             <input type="text" id="address" class="form-control" placeholder="주소를 입력하세요" required>
+            <div id="addressError" class="error-message"></div>
 
             <label for="message" class="form-label">배송 요청 사항 (선택)</label>
             <textarea id="message" class="form-control" rows="3" placeholder="예: 문 앞에 놓아주세요"></textarea>
 
-            <button type="submit" class="btn btn-primary btn-payment mt-3">결제하기</button>
+            <button type="button" class="btn btn-primary btn-payment mt-3" onclick="payment();">결제하기</button>
         </form>
     </div>
 </main>
+
+<!-- 부트페이 로드 -->
+<script src="https://js.bootpay.co.kr/bootpay-5.0.2.min.js" type="application/javascript"></script>
+<script>
+    var payInfo = [];
+    var totalPrice = 0;
+
+    $(function() {
+        loadPayInfo();
+    });
+
+    function loadPayInfo() {
+        const idArr = cart.getProductsInCart().map(p => p.id);
+
+        fetchGet({
+            url : '/products/info?productIdArr=' + idArr.join(','),
+            success : async function(response) {
+                const res = await response.json();
+                const productList = res.data;
+
+                for (let i = 0; i < productList.length; i++) {
+                    const productInfo = productList[i];
+                    const cartInfo = cart.getProductsInCart().find(p => p.id === productInfo.id);
+
+                    payInfo.push({
+                        id : productInfo.id,
+                        name : productInfo.name,
+                        price : productInfo.price,
+                        quantity : cartInfo.quantity,
+                    });
+
+                    totalPrice += productInfo.price * cartInfo.quantity;
+                }
+
+                const totalPriceText = new Intl.NumberFormat('ko-KR').format(totalPrice);
+                $('.total-amount').text('결제할 금액: ' + totalPriceText)
+            },
+            fail : async function(response) {
+
+            }
+        });
+    }
+
+    async function payment() {
+        const addressInput = document.getElementById("address");
+        const addressError = document.getElementById("addressError");
+
+        // 초기화
+        addressError.textContent = "";
+        addressInput.classList.remove("error-border");
+
+        if (!addressInput.value) {
+            addressError.textContent = '주소를 입력하세요.';
+            addressInput.classList.add("error-border");
+            return;
+        }
+
+        const response = await Bootpay.requestPayment({
+          "application_id": "[[${@environment.getProperty('bootpay.javascript.key')}]]",
+          "price": 1000,
+          "order_name": "테스트결제",
+          "order_id": "[[${T(com.park.mall.common.IdUtil).generateOrderId()}]]",
+          "items": [
+            {
+              "id": "item_id",
+              "name": "테스트아이템",
+              "qty": 1,
+              "price": 1000
+            }
+          ],
+          "extra": {
+            "open_type": "iframe",
+            "card_quota": "0,2,3",
+            "escrow": false
+          }
+        })
+    }
+</script>
 
 </body>
 </html>
