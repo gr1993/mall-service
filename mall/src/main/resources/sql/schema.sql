@@ -83,3 +83,5 @@ CREATE TABLE IF NOT EXISTS `parksinsa`.`order_details` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+ALTER TABLE parksinsa.orders ADD receipt_id VARCHAR(200) NOT NULL;
