@@ -70,18 +70,20 @@ public class OrdersJpaRepositoryTest {
         orders.setReceiptId("abcd123");
 
         OrderDetails orderDetails1 = new OrderDetails();
-        orderDetails1.setOrdersId(orders.getId());
+        orderDetails1.setOrders(orders);
         orderDetails1.setProduct(productList.get(0));
         orderDetails1.setProductName(productList.get(0).getName());
         orderDetails1.setPrice(productList.get(0).getPrice());
         orderDetails1.setQuantity(1);
 
         OrderDetails orderDetails2 = new OrderDetails();
-        orderDetails2.setOrdersId(orders.getId());
+        orderDetails2.setOrders(orders);
         orderDetails2.setProduct(productList.get(1));
         orderDetails2.setProductName(productList.get(1).getName());
         orderDetails2.setPrice(productList.get(1).getPrice());
         orderDetails2.setQuantity(2);
+        orders.getOrderDetails().add(orderDetails1);
+        orders.getOrderDetails().add(orderDetails2);
     }
 
     @Test
@@ -100,6 +102,7 @@ public class OrdersJpaRepositoryTest {
     void updateOrders() {
         //when
         ordersJpaRepository.save(orders);
+        orders = ordersJpaRepository.findByIdWithOrderDetails(orders.getId()).orElseThrow();
         orders.setAddress("주소 변경");
         orders.setStatus(Status.CANCEL);
         orders.setPayType(PayType.CARD);
@@ -118,7 +121,7 @@ public class OrdersJpaRepositoryTest {
 
     @AfterEach
     public void clear() {
-        ordersJpaRepository.delete(orders);
+        ordersJpaRepository.deleteById(orders.getId());
     }
 
     @AfterAll

@@ -44,10 +44,14 @@ public class Orders {
     @Column
     private String receiptId;
 
+    /**
+     * @Id만 지정한 엔티티인 경우는 CascadeType.MERGE도 포함하여야 PERSIST 저장 가능
+     * 참고 자료 : https://browngoo.tistory.com/4
+     */
     @OneToMany(
-            mappedBy = "ordersId",
+            mappedBy = "orders",
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     private List<OrderDetails> orderDetails = new ArrayList<>();
 }

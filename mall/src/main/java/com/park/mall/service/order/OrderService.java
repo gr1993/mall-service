@@ -91,7 +91,7 @@ public class OrderService {
             totalPrice += product.getPrice() * cartItem.getQuantity();
 
             OrderDetails orderDetails = new OrderDetails();
-            orderDetails.setOrdersId(orders.getId());
+            orderDetails.setOrders(orders);
             orderDetails.setProduct(product);
             orderDetails.setProductName(product.getName());
             orderDetails.setPrice(product.getPrice());

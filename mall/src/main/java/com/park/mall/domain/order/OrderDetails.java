@@ -13,8 +13,9 @@ public class OrderDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "orders_id")
-    private String ordersId;
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name="orders_id")
+    private Orders orders;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name="product_id")
