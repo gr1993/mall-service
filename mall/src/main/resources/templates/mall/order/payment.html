@@ -41,8 +41,22 @@
         loadPayInfo();
     });
 
+    function getCartList() {
+        let cartList = [];
+
+        //장바구니 모드인지 확인 아니면 단일 구매 모드
+        if (cart.getCartMode()) {
+            cartList = cart.getProductsInCart();
+        } else {
+            const product = cart.getSingleProduct();
+            cartList.push(product);
+        }
+        return cartList;
+    }
+
     function loadPayInfo() {
-        const idArr = cart.getProductsInCart().map(p => p.id);
+        const cartList = getCartList();
+        const idArr = cartList.map(p => p.id);
 
         fetchGet({
             url : '/products/info?productIdArr=' + idArr.join(','),
@@ -52,13 +66,13 @@
 
                 for (let i = 0; i < productList.length; i++) {
                     const productInfo = productList[i];
-                    const cartInfo = cart.getProductsInCart().find(p => p.id === productInfo.id);
+                    const cartInfo = cartList.find(p => p.id === productInfo.id);
 
                     payInfo.push({
                         id : productInfo.id,
                         name : productInfo.name,
                         price : productInfo.price,
-                        quantity : cartInfo.quantity,
+                        qty : cartInfo.quantity,
                     });
 
                     totalPrice += productInfo.price * cartInfo.quantity;
@@ -68,12 +82,17 @@
                 $('.total-amount').text('결제할 금액: ' + totalPriceText)
             },
             fail : async function(response) {
-
+                alert('상품 정보가 올바르지 않습니다.');
             }
         });
     }
 
     async function payment() {
+        if (totalPrice === 0 || payInfo.length === 0) {
+            alert('결제할 상품이 존재하지 않습니다.');
+            return;
+        }
+
         const addressInput = document.getElementById("address");
         const addressError = document.getElementById("addressError");
 
@@ -87,25 +106,95 @@
             return;
         }
 
-        const response = await Bootpay.requestPayment({
-          "application_id": "[[${@environment.getProperty('bootpay.javascript.key')}]]",
-          "price": 1000,
-          "order_name": "테스트결제",
-          "order_id": "[[${T(com.park.mall.common.IdUtil).generateOrderId()}]]",
-          "items": [
-            {
-              "id": "item_id",
-              "name": "테스트아이템",
-              "qty": 1,
-              "price": 1000
+        let orderName = payInfo[0].name;
+        if (payInfo.length > 1) {
+            orderName = orderName + ' 외 ' + (payInfo.length - 1) + '건'
+        }
+
+        try {
+            const response = await Bootpay.requestPayment({
+                "application_id": "[[${@environment.getProperty('bootpay.javascript.key')}]]",
+                "price": totalPrice,
+                "order_name": orderName,
+                "order_id": "[[${T(com.park.mall.common.IdUtil).generateOrderId()}]]",
+                "items": payInfo,
+                "extra": {
+                    "open_type": "iframe",
+                    "card_quota": "0,2,3",
+                    "escrow": false,
+                    "separately_confirmed": true
+                }
+            });
+
+            switch (response.event) {
+                case 'issued':
+                    // 가상계좌 입금 완료 처리
+                    break
+                case 'done':
+                    console.log(response)
+                    // 결제 완료 처리
+                    break
+                case 'confirm': //payload.extra.separately_confirmed = true; 일 경우 승인 전 해당 이벤트가 호출됨
+                    console.log(response.receipt_id)
+
+                    // 서버에 승인 요청
+                    sendOrders(response.receipt_id);
+                    break
             }
-          ],
-          "extra": {
-            "open_type": "iframe",
-            "card_quota": "0,2,3",
-            "escrow": false
-          }
-        })
+        } catch (e) {
+            // 결제 진행중 오류 발생
+            // e.error_code - 부트페이 오류 코드
+            // e.pg_error_code - PG 오류 코드
+            // e.message - 오류 내용
+            console.log(e.message)
+            switch (e.event) {
+                case 'cancel':
+                    // 사용자가 결제창을 닫을때 호출
+                    console.log(e.message);
+                    break
+                case 'error':
+                    // 결제 승인 중 오류 발생시 호출
+                    console.log(e.error_code);
+                    break
+            }
+        }
+    }
+
+    async function sendOrders(receiptId) {
+        const addressInput = document.getElementById("address");
+
+        const csrfToken = $("meta[name='_csrf']").attr("content");
+        const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+        const cartItemList = [];
+        for (let i = 0; i < payInfo.length; i++) {
+            cartItemList.push({
+                id : payInfo[i].id,
+                quantity : payInfo[i].qty,
+            });
+        }
+
+        fetchPost({
+            url : '/api/orders',
+            headers : {
+                [csrfHeader] : csrfToken
+            },
+            data : {
+                receiptId,
+                address : addressInput.value,
+                cartItemList
+            },
+            success : async function(response) {
+                // 승인 중 창이 떠있어서 닫아 버리기(서버에서 처리해버리기 때문)
+                Bootpay.destroy();
+                alert('[[#{orders.success}]]');
+                location.href="/orders/my";
+            },
+            fail : async function(response) {
+                Bootpay.destroy();
+                alert('[[#{orders.fail}]]');
+            }
+        });
     }
 </script>
 

@@ -22,7 +22,7 @@
     <!-- 장바구니 합계 -->
     <div class="cart-summary">
         <p class="total-price" id="cart-total">총 금액 : 0원</p>
-        <button class="btn btn-primary btn-lg mt-3" onclick="location.href='/payment'">주문하기</button>
+        <button class="btn btn-primary btn-lg mt-3" onclick="goPayment();">주문하기</button>
     </div>
 </main>
 
@@ -104,6 +104,11 @@
         cart.addProductInCart({ id: productId, quantity, noToast: true })
 
         calculateTotalPrice();
+    }
+
+    function goPayment() {
+        cart.setCartMode(true);
+        location.href='/payment';
     }
 </script>
 
