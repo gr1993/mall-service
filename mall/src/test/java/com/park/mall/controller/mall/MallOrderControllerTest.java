@@ -3,17 +3,22 @@ package com.park.mall.controller.mall;
 import com.park.mall.config.SecurityConfig;
 import com.park.mall.security.AdminUserDetailsService;
 import com.park.mall.security.MemberUserDetailsService;
+import com.park.mall.service.order.OrderService;
 import com.park.mall.web.mall.order.MallOrderController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +34,9 @@ public class MallOrderControllerTest {
 
     @MockitoBean
     private MemberUserDetailsService memberUserDetailsService;
+
+    @MockitoBean
+    private OrderService orderService;
 
     @Test
     void cartView() throws Exception {
@@ -66,5 +74,62 @@ public class MallOrderControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
+    }
+
+    @Test
+    @WithMockUser
+    void ordersNobody() throws Exception {
+        //when
+        ResultActions mvcAction = mockMvc.perform(
+                post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}")
+                        .with(csrf())
+        );
+
+        //then
+        MvcResult mvcResult = mvcAction
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser
+    void ordersSuccess() throws Exception {
+        //given
+        String jsonRequest = """
+        {
+            "receiptId": "a1w2e3r4",
+            "ordersId": "ORD20250128123053",
+            "address": "OO시 OO구 00동 000-000",
+            "cartItemList": [
+                {
+                    "id": 1,
+                    "quantity": 2
+                },
+                {
+                    "id": 2,
+                    "quantity": 4
+                }
+            ]
+        }
+        """;
+
+        //when
+        ResultActions mvcAction = mockMvc.perform(
+                post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .with(csrf())
+        );
+
+        //then
+        MvcResult mvcResult = mvcAction
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
     }
 }

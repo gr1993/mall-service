@@ -1,5 +1,6 @@
 package com.park.mall.service.order;
 
+import com.park.mall.common.exception.PaymentException;
 import com.park.mall.domain.member.Member;
 import com.park.mall.domain.order.OrderDetails;
 import com.park.mall.domain.order.Orders;
@@ -64,16 +65,16 @@ public class OrderService {
         String receiptId = orderRequest.getReceiptId();
         ReceiptInfo receiptInfo = bootpayService.getReceiptInfo(receiptId);
 
-        if (receiptInfo == null || StringUtils.hasText(receiptInfo.getReceiptId())) {
-            throw new RuntimeException("유효하지 않은 결제 건");
+        if (receiptInfo == null || !StringUtils.hasText(receiptInfo.getReceiptId())) {
+            throw new PaymentException("유효하지 않은 결제 건");
         }
 
         // 검증하기도 전에 이미 승인되었다면 취소 처리
         if (BootpayStatus.COMPLETE.equals(receiptInfo.getStatus())) {
             bootpayService.cancel(receiptId);
-            throw new RuntimeException("검증 전 완료 건으로 취소");
+            throw new PaymentException("검증 전 완료 건으로 취소");
         } else if (!BootpayStatus.CONFIRM_BEFORE.equals(receiptInfo.getStatus())) {
-            throw new RuntimeException("승인 가능한 상태가 아님 : " + receiptInfo.getStatus());
+            throw new PaymentException("승인 가능한 상태가 아님 : " + receiptInfo.getStatus());
         }
 
         // 결제 데이터 검증
@@ -100,13 +101,13 @@ public class OrderService {
 
         // 결제 금액과 실제 상품 금액 합계가 다른 경우 취소
         if (totalPrice != paymentPrice) {
-            throw new RuntimeException("결제 금액이 올바르지 않습니다.");
+            throw new PaymentException("결제 금액이 올바르지 않습니다.");
         }
 
         //승인 처리
         receiptInfo = bootpayService.confirmReceipt(receiptId);
         if (!BootpayStatus.COMPLETE.equals(receiptInfo.getStatus())) {
-            throw new RuntimeException("정상적으로 승인되지 않았습니다.");
+            throw new PaymentException("정상적으로 승인되지 않았습니다.");
         }
         return orders;
     }
