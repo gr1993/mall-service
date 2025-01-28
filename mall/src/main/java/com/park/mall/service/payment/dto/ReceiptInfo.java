@@ -34,6 +34,9 @@ public class ReceiptInfo {
     @JsonProperty("method")
     private String method;
 
+    @JsonProperty("method_symbol")
+    private String methodSymbol;
+
     @JsonProperty("method_origin")
     private String methodOrigin;
 

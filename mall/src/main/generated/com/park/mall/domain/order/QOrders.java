@@ -40,6 +40,8 @@ public class QOrders extends EntityPathBase<Orders> {
 
     public final EnumPath<PayType> payType = createEnum("payType", PayType.class);
 
+    public final StringPath receiptId = createString("receiptId");
+
     public final EnumPath<Status> status = createEnum("status", Status.class);
 
     public QOrders(String variable) {

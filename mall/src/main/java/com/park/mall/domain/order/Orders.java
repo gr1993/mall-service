@@ -36,10 +36,13 @@ public class Orders {
     private LocalDateTime payDate;
 
     @Enumerated(EnumType.STRING)
-    private CodeYn cancelYn;
+    private CodeYn cancelYn = CodeYn.N;
 
     @Column
     private LocalDateTime cancelDate;
+
+    @Column
+    private String receiptId;
 
     @OneToMany(
             mappedBy = "ordersId",
