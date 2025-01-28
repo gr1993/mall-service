@@ -102,6 +102,8 @@ public class ProductServiceTest {
         Assertions.assertNotNull(srchProductImg.getDescImgName());
         Assertions.assertEquals(productImg.getMainImgName(), srchProductImg.getMainImgName());
         Assertions.assertEquals(productImg.getDescImgName(), srchProductImg.getDescImgName());
+
+        productJpaRepository.deleteById(product.getId());
     }
 
     @Test
@@ -136,6 +138,8 @@ public class ProductServiceTest {
         ProductImg srchProductImg = srchProduct.getProductImgs().get(0);
         Assertions.assertEquals(fileName, srchProductImg.getMainImgName());
         Assertions.assertEquals(fileName, srchProductImg.getDescImgName());
+
+        productJpaRepository.deleteById(product.getId());
     }
 
     @Test
@@ -219,6 +223,8 @@ public class ProductServiceTest {
         Assertions.assertEquals(product.getPrice(), productDetail.getPrice());
         Assertions.assertEquals(productImg.getMainImgName(), productDetail.getMainImg());
         Assertions.assertEquals(productImg.getDescImgName(), productDetail.getDescImg());
+
+        productJpaRepository.deleteById(product.getId());
     }
 
     @Test
