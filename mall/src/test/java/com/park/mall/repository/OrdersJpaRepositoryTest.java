@@ -63,10 +63,11 @@ public class OrdersJpaRepositoryTest {
         orders.setMember(member);
         orders.setAddress("서울시 구로구 디지털로 00길 00");
         orders.setStatus(Status.PREPARE);
-        orders.setPayType(PayType.NORMAL);
+        orders.setPayType(PayType.CARD);
         orders.setPayAmount(10000);
         orders.setPayDate(LocalDateTime.now());
         orders.setCancelYn(CodeYn.N);
+        orders.setReceiptId("abcd123");
 
         OrderDetails orderDetails1 = new OrderDetails();
         orderDetails1.setOrdersId(orders.getId());
@@ -101,7 +102,7 @@ public class OrdersJpaRepositoryTest {
         ordersJpaRepository.save(orders);
         orders.setAddress("주소 변경");
         orders.setStatus(Status.CANCEL);
-        orders.setPayType(PayType.NORMAL);
+        orders.setPayType(PayType.CARD);
         orders.setPayAmount(20000);
         orders.setCancelYn(CodeYn.Y);
 

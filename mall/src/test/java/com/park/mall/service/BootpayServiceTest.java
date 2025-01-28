@@ -2,6 +2,7 @@ package com.park.mall.service;
 
 import com.park.mall.service.http.HttpClientService;
 import com.park.mall.service.payment.BootpayService;
+import com.park.mall.service.payment.BootpayStatus;
 import com.park.mall.service.payment.dto.ReceiptInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -98,7 +99,7 @@ public class BootpayServiceTest {
         Assertions.assertEquals("카드", receiptInfo.getMethod());
         Assertions.assertEquals("카드", receiptInfo.getMethodOrigin());
         Assertions.assertEquals("card", receiptInfo.getMethodOriginSymbol());
-        Assertions.assertEquals(1, receiptInfo.getStatus());
+        Assertions.assertEquals(BootpayStatus.COMPLETE, receiptInfo.getStatus());
     }
 
     @Test
@@ -130,7 +131,7 @@ public class BootpayServiceTest {
 
         //then
         Assertions.assertEquals("6244f60c1fc19202e42e8c4e", receiptInfo.getReceiptId());
-        Assertions.assertEquals(1, receiptInfo.getStatus());
+        Assertions.assertEquals(BootpayStatus.COMPLETE, receiptInfo.getStatus());
     }
 
     @Test
@@ -150,6 +151,6 @@ public class BootpayServiceTest {
 
         //then
         Assertions.assertEquals("6244f60c1fc19202e42e8c4e", receiptInfo.getReceiptId());
-        Assertions.assertEquals(20, receiptInfo.getStatus());
+        Assertions.assertEquals(BootpayStatus.CANCEL, receiptInfo.getStatus());
     }
 }
