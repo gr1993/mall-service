@@ -19,78 +19,60 @@
         <h2>주문 목록 확인</h2>
 
         <!-- 주문 카드 시작 -->
-        <div class="order-card">
+        <div class="order-card" th:each="order : ${orderList}">
             <div class="order-header">
-                <h4>#12345 - 스마트폰 세트</h4>
-                <span class="order-status status-completed">주문 완료</span>
+                <h4 th:text="'주문번호 : ' + ${order.id}"></h4>
+                <span class="order-status status-completed" th:text="${order.statusText}">주문 완료</span>
             </div>
-            <p class="order-details">주문 날짜: 2025-01-22 | 결제 총 금액: ₩950,000</p>
+            <p class="order-details" th:text="'주문 시간: ' + ${#temporals.format(order.payDate, 'yyyy-MM-dd HH:mm:ss')} + ' | ' + '결제 총 금액: ' + ${#numbers.formatInteger(order.payAmount, 0, 'COMMA')} + '원'">
+                주문 시간: 2025-01-22 | 결제 총 금액: ₩950,000
+            </p>
             <div class="order-items">
-                <div class="order-item">
-                    <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
+                <div class="order-item" th:each="orderDetail : ${order.orderDetailInfos}">
+                    <img th:src="'/admin/file/download?filePath=' + ${orderDetail.mainImgPath}" alt="상품 이미지">
                     <div class="item-details">
-                        <div class="item-name">스마트폰</div>
-                        <div class="item-quantity">수량: 1</div>
-                        <div class="item-price">₩950,000</div>
+                        <div class="item-name" th:text="${orderDetail.productName}">스마트폰</div>
+                        <div class="item-quantity" th:text="'수량: ' + ${orderDetail.quantity}">수량: 1</div>
+                        <div class="item-price" th:text="${#numbers.formatInteger(orderDetail.price, 0, 'COMMA')} + '원'">₩950,000</div>
                     </div>
                 </div>
             </div>
-            <button class="btn-details">상세 보기</button>
-        </div>
-
-        <div class="order-card">
-            <div class="order-header">
-                <h4>#12346 - 전자기기 세트</h4>
-                <span class="order-status status-completed">주문 완료</span>
-            </div>
-            <p class="order-details">주문 날짜: 2025-01-20 | 결제 총 금액: ₩190,000</p>
-            <div class="order-items">
-                <div class="order-item">
-                    <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
-                    <div class="item-details">
-                        <div class="item-name">무선 이어폰</div>
-                        <div class="item-quantity">수량: 2</div>
-                        <div class="item-price">₩95,000</div>
-                    </div>
-                </div>
-                <div class="order-item">
-                    <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
-                    <div class="item-details">
-                        <div class="item-name">블루투스 스피커</div>
-                        <div class="item-quantity">수량: 1</div>
-                        <div class="item-price">₩95,000</div>
-                    </div>
-                </div>
-            </div>
-            <button class="btn-details">상세 보기</button>
-        </div>
-
-        <div class="order-card">
-            <div class="order-header">
-                <h4>#12347 - 게이밍 키보드 세트</h4>
-                <span class="order-status status-pending">결제 대기</span>
-            </div>
-            <p class="order-details">주문 날짜: 2025-01-19 | 결제 총 금액: ₩150,000</p>
-            <div class="order-items">
-                <div class="order-item">
-                    <img src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg" alt="상품 이미지">
-                    <div class="item-details">
-                        <div class="item-name">게이밍 키보드</div>
-                        <div class="item-quantity">수량: 1</div>
-                        <div class="item-price">₩150,000</div>
-                    </div>
-                </div>
-            </div>
-            <button class="btn-details">상세 보기</button>
+            <button class="btn btn-danger mt-2">주문 취소</button>
         </div>
         <!-- 주문 카드 끝 -->
 
         <!-- 페이지네이션 -->
         <div class="pagination-container">
-            <button class="pagination-button">이전</button>
-            <button class="pagination-button">다음</button>
+            <button class="pagination-button" onclick="prevPage();">이전</button>
+            <button class="pagination-button" onclick="nextPage();">다음</button>
         </div>
     </div>
+
+    <script>
+        function getPage() {
+            const urlParams = new URL(location.href).searchParams;
+            let page = urlParams.get('page');
+            if (!page) {
+                page = 1;
+            }
+            return page;
+        }
+
+        function prevPage() {
+            const page = getPage();
+            let pageNum = Number(page) - 1;
+            if (pageNum < 1) {
+                pageNum = 1;
+            }
+            location.href = '/orders/my?page=' + pageNum;
+        }
+
+        function nextPage() {
+            const page = getPage();
+            let pageNum = Number(page) + 1;
+            location.href = '/orders/my?page=' + pageNum;
+        }
+    </script>
 </main>
 
 </body>

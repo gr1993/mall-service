@@ -1,11 +1,16 @@
 package com.park.mall.controller.mall;
 
+import com.park.mall.common.IdUtil;
 import com.park.mall.config.SecurityConfig;
+import com.park.mall.domain.order.Status;
 import com.park.mall.security.AdminUserDetailsService;
 import com.park.mall.security.MemberUserDetailsService;
 import com.park.mall.service.order.OrderService;
+import com.park.mall.service.order.dto.OrderDetailInfo;
+import com.park.mall.service.order.dto.OrderInfo;
 import com.park.mall.web.mall.order.MallOrderController;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -15,6 +20,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,6 +64,33 @@ public class MallOrderControllerTest {
     @Test
     @WithMockUser
     void myOrderView() throws Exception {
+        //given
+        List<OrderInfo> orderInfoList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            OrderInfo orderInfo = new OrderInfo();
+            orderInfo.setId(IdUtil.generateOrderId());
+            orderInfo.setMemberId("park");
+            orderInfo.setStatus(Status.PAYMENT.getCode());
+            orderInfo.setStatusText(Status.PAYMENT.getCodeText());
+            orderInfo.setPayAmount(1000);
+            orderInfo.setPayDate(LocalDateTime.now());
+
+            OrderDetailInfo orderDetailInfo = new OrderDetailInfo();
+            orderDetailInfo.setProductId(1L);
+            orderDetailInfo.setProductName("상품1");
+            orderDetailInfo.setPrice(1000);
+            orderDetailInfo.setQuantity(1);
+            orderDetailInfo.setMainImgPath("/mainImgPath");
+
+            orderInfo.getOrderDetailInfos().add(orderDetailInfo);
+            orderInfoList.add(orderInfo);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", orderInfoList);
+        Mockito.when(orderService.searchMyOrders(Mockito.any()))
+                .thenReturn(response);
+
         //when
         ResultActions mvcAction = mockMvc.perform(get("/orders/my"));
 

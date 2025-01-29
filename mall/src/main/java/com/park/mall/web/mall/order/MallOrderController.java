@@ -3,14 +3,17 @@ package com.park.mall.web.mall.order;
 import com.park.mall.service.order.OrderService;
 import com.park.mall.service.order.dto.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 public class MallOrderController {
@@ -24,7 +27,22 @@ public class MallOrderController {
     }
 
     @GetMapping("/orders/my")
-    public String myOrderView() {
+    public String myOrderView(
+            @RequestParam(required = false, value = "page") Integer page,
+            @RequestParam(required = false, value = "pageSize") Integer pageSize,
+            Model model
+    ) {
+        if (page == null) {
+            page = 1;
+        }
+        if (pageSize == null) {
+            pageSize = 3;
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, "id");
+        Map<String, Object> response = orderService.searchMyOrders(pageable);
+
+        model.addAttribute("orderList", response.get("data"));
         return "mall/order/my";
     }
 
