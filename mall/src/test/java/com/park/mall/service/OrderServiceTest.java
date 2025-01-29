@@ -1,16 +1,21 @@
 package com.park.mall.service;
 
+import com.park.mall.common.IdUtil;
 import com.park.mall.common.exception.PaymentException;
 import com.park.mall.domain.member.Member;
+import com.park.mall.domain.order.OrderDetails;
 import com.park.mall.domain.order.Orders;
 import com.park.mall.domain.order.Status;
 import com.park.mall.domain.product.Product;
+import com.park.mall.domain.product.ProductImg;
 import com.park.mall.repository.member.MemberJpaRepository;
 import com.park.mall.repository.order.OrdersJpaRepository;
+import com.park.mall.repository.order.OrdersQueryRepository;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.security.MemberUserDetails;
 import com.park.mall.service.order.OrderService;
 import com.park.mall.service.order.dto.CartItem;
+import com.park.mall.service.order.dto.OrderInfo;
 import com.park.mall.service.order.dto.OrderRequest;
 import com.park.mall.service.payment.BootpayService;
 import com.park.mall.service.payment.BootpayStatus;
@@ -22,12 +27,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -47,14 +58,18 @@ public class OrderServiceTest {
     private OrdersJpaRepository ordersJpaRepository;
 
     @MockitoBean
+    private OrdersQueryRepository ordersQueryRepository;
+
+    @MockitoBean
     private MemberJpaRepository memberJpaRepository;
 
     List<CartItem> cartItemList = new ArrayList<>();
     List<Product> productList = new ArrayList<>();
+    private Member member;
 
     @BeforeEach
     public void setup() {
-        Member member = new Member();
+        member = new Member();
         member.setId("gr1993");
         member.setPassword(null);
         member.setName("박강림");
@@ -66,6 +81,8 @@ public class OrderServiceTest {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        Mockito.when(memberJpaRepository.findById(Mockito.any()))
+                .thenReturn(Optional.of(new Member()));
 
         // 장바구니 셋팅
         CartItem cartItem1 = new CartItem();
@@ -83,6 +100,11 @@ public class OrderServiceTest {
         product1.setId(1L);
         product1.setPrice(1000);
         product1.setName("상품1");
+
+        ProductImg productImg = new ProductImg();
+        productImg.setProduct(product1);
+        productImg.setMainImgPath("mainImgPath");
+        product1.getProductImgs().add(productImg);
         productList.add(product1);
 
         Product product2 = new Product();
@@ -93,12 +115,48 @@ public class OrderServiceTest {
     }
 
     @Test
+    void searchMyOrders() {
+        //given
+        Pageable pageable = PageRequest.of(0, 3);
+
+        List<Orders> ordersList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Orders newOrders = new Orders();
+            newOrders.setId(IdUtil.generateOrderId());
+            newOrders.setMember(member);
+            newOrders.setStatus(Status.PAYMENT);
+            newOrders.setPayAmount(1000);
+            newOrders.setPayDate(LocalDateTime.now());
+
+            OrderDetails orderDetails = new OrderDetails();
+            orderDetails.setOrders(newOrders);
+            orderDetails.setProduct(productList.get(0));
+            orderDetails.setProductName(orderDetails.getProduct().getName());
+            orderDetails.setQuantity(1);
+            orderDetails.setPrice(orderDetails.getProduct().getPrice());
+            newOrders.getOrderDetails().add(orderDetails);
+            ordersList.add(newOrders);
+        }
+
+        Page<Orders> page = new PageImpl<>(ordersList, pageable, 4);
+        Mockito.when(ordersQueryRepository.searchPage(Mockito.any(), Mockito.any()))
+                .thenReturn(page);
+
+        //when
+        Map<String, Object> response = orderService.searchMyOrders(pageable);
+
+        //then
+        List<OrderInfo> orderInfoList = (List<OrderInfo>) response.get("data");
+        Assertions.assertEquals(1, (Integer) response.get("page"));
+        Assertions.assertEquals(4, (Long) response.get("totalElements"));
+        Assertions.assertEquals(3, orderInfoList.size());
+    }
+
+    @Test
     void orderWithInvalidReceiptInfo() {
         //given
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setReceiptId("a1b2c3d4");
-        Mockito.when(memberJpaRepository.findById(Mockito.any()))
-                .thenReturn(Optional.of(new Member()));
 
         //when & then
         PaymentException exception = Assertions.assertThrows(PaymentException.class, () -> {
@@ -113,8 +171,6 @@ public class OrderServiceTest {
         //given
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setReceiptId("a1b2c3d4");
-        Mockito.when(memberJpaRepository.findById(Mockito.any()))
-                .thenReturn(Optional.of(new Member()));
 
         ReceiptInfo receiptInfo = new ReceiptInfo();
         receiptInfo.setReceiptId("a1b2c3d4");
@@ -135,8 +191,6 @@ public class OrderServiceTest {
         //given
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setReceiptId("a1b2c3d4");
-        Mockito.when(memberJpaRepository.findById(Mockito.any()))
-                .thenReturn(Optional.of(new Member()));
 
         ReceiptInfo receiptInfo = new ReceiptInfo();
         receiptInfo.setReceiptId("a1b2c3d4");
@@ -166,8 +220,6 @@ public class OrderServiceTest {
         //given
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setReceiptId("a1b2c3d4");
-        Mockito.when(memberJpaRepository.findById(Mockito.any()))
-                .thenReturn(Optional.of(new Member()));
 
         ReceiptInfo receiptInfo = new ReceiptInfo();
         receiptInfo.setReceiptId("a1b2c3d4");
@@ -203,8 +255,6 @@ public class OrderServiceTest {
         //given
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setReceiptId("a1b2c3d4");
-        Mockito.when(memberJpaRepository.findById(Mockito.any()))
-                .thenReturn(Optional.of(new Member()));
 
         ReceiptInfo receiptInfo = new ReceiptInfo();
         receiptInfo.setReceiptId("a1b2c3d4");

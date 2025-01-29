@@ -8,14 +8,20 @@ import com.park.mall.domain.order.PayType;
 import com.park.mall.domain.order.Status;
 import com.park.mall.domain.product.Product;
 import com.park.mall.repository.member.MemberJpaRepository;
+import com.park.mall.repository.order.OrderSearchCondition;
 import com.park.mall.repository.order.OrdersJpaRepository;
+import com.park.mall.repository.order.OrdersQueryRepository;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.service.order.dto.CartItem;
+import com.park.mall.service.order.dto.OrderDetailInfo;
+import com.park.mall.service.order.dto.OrderInfo;
 import com.park.mall.service.order.dto.OrderRequest;
 import com.park.mall.service.payment.BootpayService;
 import com.park.mall.service.payment.BootpayStatus;
 import com.park.mall.service.payment.dto.ReceiptInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -39,8 +49,21 @@ public class OrderService {
     private OrdersJpaRepository ordersJpaRepository;
 
     @Autowired
+    private OrdersQueryRepository ordersQueryRepository;
+
+    @Autowired
     private MemberJpaRepository memberJpaRepository;
 
+    public Map<String, Object> searchMyOrders(Pageable pageable) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication a = context.getAuthentication();
+        Member member = memberJpaRepository.findById(a.getName()).orElseThrow();
+
+        OrderSearchCondition condition = new OrderSearchCondition();
+        condition.setMemberId(member.getId());
+
+        return getResultData(condition, pageable);
+    }
 
     public void order(OrderRequest orderRequest) {
         // 결제 검증 전 사용자 정보 불러오기
@@ -59,6 +82,42 @@ public class OrderService {
         orders.setPayDate(LocalDateTime.now());
 
         ordersJpaRepository.save(orders);
+    }
+
+    private Map<String, Object> getResultData(OrderSearchCondition condition, Pageable pageable) {
+        Page<Orders> page = ordersQueryRepository.searchPage(condition, pageable);
+        List<Orders> content = page.getContent();
+        List<OrderInfo> orderInfoList = new ArrayList<>();
+        for(Orders o : content) {
+            OrderInfo orderInfo = new OrderInfo();
+            orderInfo.setId(o.getId());
+            orderInfo.setMemberId(o.getMember().getId());
+            orderInfo.setStatus(o.getStatus().getCode());
+            orderInfo.setStatusText(o.getStatus().getCodeText());
+            orderInfo.setPayAmount(o.getPayAmount());
+            orderInfo.setPayDate(o.getPayDate());
+
+            for (OrderDetails orderDetails : o.getOrderDetails()) {
+                Product product = orderDetails.getProduct();
+                OrderDetailInfo orderDetailInfo = new OrderDetailInfo();
+                orderDetailInfo.setProductId(product.getId());
+                orderDetailInfo.setProductName(orderDetails.getProductName());
+                orderDetailInfo.setQuantity(orderDetails.getQuantity());
+                orderDetailInfo.setPrice(orderDetails.getPrice());
+                orderDetailInfo.setMainImgPath(product.getProductImgs().get(0).getMainImgPath());
+
+                orderInfo.getOrderDetailInfos().add(orderDetailInfo);
+            }
+
+            orderInfoList.add(orderInfo);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("page", page.getNumber() + 1);
+        response.put("totalPages", page.getTotalPages());
+        response.put("totalElements", page.getTotalElements());
+        response.put("data", orderInfoList);
+        return response;
     }
 
     private Orders validatePayment(OrderRequest orderRequest) {

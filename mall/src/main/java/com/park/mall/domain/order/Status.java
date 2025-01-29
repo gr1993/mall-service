@@ -26,4 +26,16 @@ public enum Status {
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("No Status"));
     }
+
+    public String getCodeText() {
+        return switch (this.code) {
+            case "001" -> "결제완료";
+            case "002" -> "배송준비중";
+            case "003" -> "배송중";
+            case "004" -> "배송완료";
+            case "005" -> "구매확정";
+            case "010" -> "취소";
+            default -> "";
+        };
+    }
 }
