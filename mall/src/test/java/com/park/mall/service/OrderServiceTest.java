@@ -284,4 +284,37 @@ public class OrderServiceTest {
         Mockito.verify(ordersJpaRepository)
                 .save(Mockito.any(Orders.class));
     }
+
+    @Test
+    void cancelOrder() {
+        Orders orders = new Orders();
+        orders.setId(IdUtil.generateOrderId());
+        orders.setStatus(Status.PAYMENT);
+        orders.setReceiptId("1a2a3a4a");
+
+        Mockito.when(ordersJpaRepository.findById(Mockito.any(String.class)))
+                .thenReturn(Optional.of(orders));
+
+        //when
+        orderService.cancelOrder(orders.getId());
+
+        //then
+        Assertions.assertEquals(Status.CANCEL, orders.getStatus());
+    }
+
+    @Test
+    void cancelOrderFail() {
+        Orders orders = new Orders();
+        orders.setId(IdUtil.generateOrderId());
+        orders.setStatus(Status.PREPARE);
+        orders.setReceiptId("1a2a3a4a");
+
+        Mockito.when(ordersJpaRepository.findById(Mockito.any(String.class)))
+                .thenReturn(Optional.of(orders));
+
+        //when & then
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            orderService.cancelOrder(orders.getId());
+        });
+    }
 }

@@ -72,4 +72,12 @@ public class MallOrderController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/api/orders/cancel/{id}")
+    @ResponseBody
+    public ResponseEntity<?> cancelOrder(@PathVariable(value = "id") String id) {
+        orderService.cancelOrder(id);
+
+        return ResponseEntity.ok().build();
+    }
 }

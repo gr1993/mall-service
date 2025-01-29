@@ -84,6 +84,16 @@ public class OrderService {
         ordersJpaRepository.save(orders);
     }
 
+    public void cancelOrder(String orderId) {
+        Orders orders = ordersJpaRepository.findById(orderId).orElseThrow();
+        if (!Status.PAYMENT.equals(orders.getStatus())) {
+            throw new RuntimeException("배송 준비중 이후 부터는 취소할 수 없습니다.");
+        }
+
+        bootpayService.cancel(orders.getReceiptId());
+        orders.setStatus(Status.CANCEL);
+    }
+
     private Map<String, Object> getResultData(OrderSearchCondition condition, Pageable pageable) {
         Page<Orders> page = ordersQueryRepository.searchPage(condition, pageable);
         List<Orders> content = page.getContent();

@@ -22,7 +22,11 @@
         <div class="order-card" th:each="order : ${orderList}">
             <div class="order-header">
                 <h4 th:text="'주문번호 : ' + ${order.id}"></h4>
-                <span class="order-status status-completed" th:text="${order.statusText}">주문 완료</span>
+                <span class="order-status"
+                      th:classappend="${order.status == '001' ? 'status-completed' : 'status-pending'}"
+                      th:text="${order.statusText}">
+                    주문 완료
+                </span>
             </div>
             <p class="order-details" th:text="'주문 시간: ' + ${#temporals.format(order.payDate, 'yyyy-MM-dd HH:mm:ss')} + ' | ' + '결제 총 금액: ' + ${#numbers.formatInteger(order.payAmount, 0, 'COMMA')} + '원'">
                 주문 시간: 2025-01-22 | 결제 총 금액: ₩950,000
@@ -37,7 +41,12 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-danger mt-2">주문 취소</button>
+            <button class="btn btn-danger mt-2"
+                    th:data-id="${order.id}"
+                    th:data-status="${order.status}"
+                    th:onclick="cancelOrder(this.getAttribute('data-id'), this.getAttribute('data-status'));">
+                주문 취소
+            </button>
         </div>
         <!-- 주문 카드 끝 -->
 
@@ -71,6 +80,34 @@
             const page = getPage();
             let pageNum = Number(page) + 1;
             location.href = '/orders/my?page=' + pageNum;
+        }
+
+        function cancelOrder(orderId, status) {
+            if (status !== '001') {
+                alert('결제완료 상태에서만 취소가 가능합니다.')
+                return;
+            }
+
+            if (!confirm('[[#{orders.cancel.before}]]')) {
+                return;
+            }
+
+            const csrfToken = $("meta[name='_csrf']").attr("content");
+            const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+            fetchPost({
+                url : '/api/orders/cancel/' + orderId,
+                headers : {
+                    [csrfHeader] : csrfToken
+                },
+                success : async function(response) {
+                    alert('[[#{orders.cancel.success}]]');
+                    location.reload();
+                },
+                fail : async function(response) {
+                    alert('[[#{orders.cancel.fail}]]');
+                }
+            });
         }
     </script>
 </main>

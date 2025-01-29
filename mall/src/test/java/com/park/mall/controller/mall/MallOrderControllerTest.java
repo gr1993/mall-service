@@ -170,4 +170,19 @@ public class MallOrderControllerTest {
 
         System.out.println(mvcResult.getResponse().getContentAsString());
     }
+
+    @Test
+    @WithMockUser
+    void cancelOrder() throws Exception {
+        //when
+        ResultActions mvcAction = mockMvc.perform(
+                post("/api/orders/cancel/ORD20250129")
+                        .with(csrf())
+        );
+
+        //then
+        mvcAction
+                .andExpect(status().isOk())
+                .andReturn();
+    }
 }
