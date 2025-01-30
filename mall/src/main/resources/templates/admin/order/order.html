@@ -48,6 +48,9 @@
         </div>
     </div>
 
+    <!-- 주문 상세 모달 -->
+    <div th:replace="~{admin/order/orderDetailModal :: orderModal}"></div>
+
     <script>
         var mallGrid;
 
@@ -101,7 +104,7 @@
             // Event
             mallGrid.on('rowClick', (...args) => {
                 const orderId = args[1]._cells[0].data;
-                alert(orderId);
+                showOrderDetailModal(orderId);
             });
         });
 

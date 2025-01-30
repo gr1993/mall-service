@@ -2,16 +2,14 @@ package com.park.mall.web.admin.order;
 
 import com.park.mall.repository.order.OrderSearchCondition;
 import com.park.mall.service.order.OrderService;
+import com.park.mall.service.order.dto.AdminOrderDetail;
 import com.park.mall.web.admin.common.GridJsInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -43,5 +41,13 @@ public class OrderController {
                 gridJsInfo.getColName());
 
         return orderService.searchOrdersForAdmin(condition, pageable);
+    }
+
+    @GetMapping("/order/detail/{id}")
+    @ResponseBody
+    public AdminOrderDetail orderDetail(
+            @PathVariable(value = "id") String id
+    ) {
+        return orderService.getAdminOrderDetail(id);
     }
 }

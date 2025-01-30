@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>주문 상세 모달</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>자바스크립트로 주문 상세 모달 열기</h2>
+</div>
+
+<th:block th:fragment="orderModal">
+    <style>
+        .product-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+
+
+    <!-- 주문 상세 모달 -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">주문 상세 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>주문 정보</h5>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item"><strong>주문 번호:</strong> <span id="odm-orderId"></span></li>
+                        <li class="list-group-item"><strong>사용자 ID:</strong> <span id="odm-memberId"></span></li>
+                        <li class="list-group-item"><strong>주소:</strong> <span id="odm-address"></span></li>
+                        <li class="list-group-item"><strong>주문 상태:</strong> <span id="odm-statusText"></span></li>
+                        <li class="list-group-item"><strong>결제 타입:</strong> <span id="odm-payTypeText"></span></li>
+                        <li class="list-group-item"><strong>결제 금액:</strong> <span id="odm-payAmount"></span> 원</li>
+                        <li class="list-group-item"><strong>주문 일자:</strong> <span id="odm-payDate"></span></li>
+                    </ul>
+
+                    <h5>구매한 상품 목록</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>이미지</th>
+                                <th>상품명</th>
+                                <th>가격</th>
+                                <th>수량</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderDetailInfos"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showOrderDetailModal(orderId) {
+            fetchGet({
+                url : '/admin/order/detail/' + orderId,
+                success : async function(response) {
+                    const orderData = await response.json();
+
+                    // 모달 열기
+                    var orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+                    updateModalData(orderData);
+                    orderModal.show();
+                },
+                fail : async function(response) {
+                    alert('잘못된 주문 정보입니다.');
+                }
+            });
+        }
+
+        function updateModalData(order) {
+            document.getElementById("odm-orderId").innerText = order.id;
+            document.getElementById("odm-memberId").innerText = order.memberId;
+            document.getElementById("odm-address").innerText = order.address;
+            document.getElementById("odm-statusText").innerText = order.statusText;
+            document.getElementById("odm-payTypeText").innerText = order.payTypeText;
+            document.getElementById("odm-payAmount").innerText = order.payAmount.toLocaleString();
+            document.getElementById("odm-payDate").innerText = order.payDate;
+
+            var orderDetailInfos = document.getElementById("orderDetailInfos");
+            orderDetailInfos.innerHTML = "";
+
+            order.orderDetailInfos.forEach(orderDetail => {
+                var row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td><img src="/admin/file/download?filePath=${orderDetail.mainImgPath}" class="product-img"></td>
+                    <td>${orderDetail.productName}</td>
+                    <td>${orderDetail.price.toLocaleString()} 원</td>
+                    <td>${orderDetail.quantity}</td>
+                `;
+
+                orderDetailInfos.appendChild(row);
+            });
+        }
+
+        function showTempModal() {
+            var orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+
+            // 주문 데이터 예제
+            var orderData = {
+                id: "202401300001",
+                memberId: "user123",
+                address: "서울특별시 강남구 테헤란로 123",
+                statusText: "배송 중",
+                payTypeText: "신용카드",
+                payAmount: 125000,
+                payDate: "2025-01-30",
+                orderDetailInfos: [
+                    { mainImgPath: "https://via.placeholder.com/50", productName: "무선 이어폰", price: 45000, quantity: 1 },
+                    { mainImgPath: "https://via.placeholder.com/50", productName: "스마트폰 케이스", price: 15000, quantity: 2 },
+                    { mainImgPath: "https://via.placeholder.com/50", productName: "휴대용 충전기", price: 30000, quantity: 1 }
+                ]
+            };
+
+            // 모달 열기
+            updateModalData(orderData);
+            orderModal.show();
+        }
+    </script>
+</th:block>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
