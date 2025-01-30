@@ -56,9 +56,27 @@
               columns: [
                 {id: "id", name: "주문 번호", width: "150px"},
                 {id: "memberId", name: "아이디", width: "100px"},
+                {id: "status", hidden: true},
                 {id: "statusText", name: "상태", width: "100px"},
-                {id: "payAmount", name: "주문 가격", width: "100px"},
-                {id: "payDate", name: "결제일", width: "200px"},
+                {
+                    id: "payAmount",
+                    name: "주문 가격",
+                    width: "100px",
+                    formatter: (cell) => `${cell}원`
+                },
+                {
+                    id: "payDate",
+                    name: "주문 시간",
+                    width: "200px",
+                    formatter: (cell) => new Date(cell).toLocaleString("ko-KR", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit"
+                    })
+                },
               ],
               data: [],
               sort: true,
@@ -79,6 +97,12 @@
                 error: '검색 중 오류가 발생하였습니다.'
               }
             });
+
+            // Event
+            mallGrid.on('rowClick', (...args) => {
+                const orderId = args[1]._cells[0].data;
+                alert(orderId);
+            });
         });
 
         // 조회
@@ -88,7 +112,7 @@
             mallGrid.updateConfig({
               server: {
                 url: '/admin/order/list?' + formData,
-                then: res => res.data.map(row => [row.id, row.memberId, row.statusText, row.payAmount, row.payDate]),
+                then: res => res.data.map(row => [row.id, row.memberId, row.status, row.statusText, row.payAmount, row.payDate]),
                 total: res => res.totalElements,
               },
               pagination: {
