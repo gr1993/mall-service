@@ -26,6 +26,7 @@ Spring Boot 기술들을 학습하기 위해 만들었으며 온라인 쇼핑몰
 	* simple-datatables
 	* jqGrid
 	* Grid.js
+* Chart.js
 
 ## 결제 모듈
 
@@ -37,6 +38,10 @@ Spring Boot 기술들을 학습하기 위해 만들었으며 온라인 쇼핑몰
 
 ## 시연 영상
 
+
+## ERD
+
+![ERD](./capture/erd-image.png)
 
 ## 테스트 커버리지
 
