@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import static com.park.mall.domain.order.QOrders.orders;
 import static com.park.mall.domain.order.QOrderDetails.orderDetails;
@@ -82,14 +83,14 @@ public class OrdersQueryRepository {
     }
 
     private BooleanExpression equalId(String id) {
-        if (id != null) {
+        if (StringUtils.hasText(id)) {
             return orders.id.eq(id);
         }
         return null;
     }
 
     private BooleanExpression equalMemberId(String memberId) {
-        if (memberId != null) {
+        if (StringUtils.hasText(memberId)) {
             return member.id.eq(memberId);
         }
         return null;

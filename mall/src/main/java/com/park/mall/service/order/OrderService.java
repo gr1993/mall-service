@@ -65,6 +65,10 @@ public class OrderService {
         return getResultData(condition, pageable);
     }
 
+    public Map<String, Object> searchOrdersForAdmin(OrderSearchCondition condition, Pageable pageable) {
+        return getResultData(condition, pageable);
+    }
+
     public void order(OrderRequest orderRequest) {
         // 결제 검증 전 사용자 정보 불러오기
         SecurityContext context = SecurityContextHolder.getContext();
