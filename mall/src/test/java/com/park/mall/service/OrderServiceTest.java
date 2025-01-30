@@ -5,6 +5,7 @@ import com.park.mall.common.exception.PaymentException;
 import com.park.mall.domain.member.Member;
 import com.park.mall.domain.order.OrderDetails;
 import com.park.mall.domain.order.Orders;
+import com.park.mall.domain.order.PayType;
 import com.park.mall.domain.order.Status;
 import com.park.mall.domain.product.Product;
 import com.park.mall.domain.product.ProductImg;
@@ -14,6 +15,7 @@ import com.park.mall.repository.order.OrdersQueryRepository;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.security.MemberUserDetails;
 import com.park.mall.service.order.OrderService;
+import com.park.mall.service.order.dto.AdminOrderDetail;
 import com.park.mall.service.order.dto.CartItem;
 import com.park.mall.service.order.dto.OrderInfo;
 import com.park.mall.service.order.dto.OrderRequest;
@@ -316,5 +318,27 @@ public class OrderServiceTest {
         Assertions.assertThrows(RuntimeException.class, () -> {
             orderService.cancelOrder(orders.getId());
         });
+    }
+
+    @Test
+    void getAdminOrderDetail() {
+        //given
+        Orders orders = new Orders();
+        orders.setMember(member);
+        orders.setStatus(Status.PAYMENT);
+        orders.setPayType(PayType.CARD);
+        OrderDetails orderDetails = new OrderDetails();
+        orderDetails.setProduct(productList.get(0));
+        orders.getOrderDetails().add(orderDetails);
+
+        Mockito.when(ordersJpaRepository.findById(Mockito.any(String.class)))
+                .thenReturn(Optional.of(orders));
+
+        //when
+        AdminOrderDetail adminOrderDetail = orderService.getAdminOrderDetail("ORD001");
+
+        //then
+        Assertions.assertNotNull(adminOrderDetail);
+        Assertions.assertEquals(1, adminOrderDetail.getOrderDetailInfos().size());
     }
 }

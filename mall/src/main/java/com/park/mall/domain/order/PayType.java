@@ -41,4 +41,18 @@ public enum PayType {
             default -> PayType.OTHER;
         };
     }
+    
+    public String getCodeText() {
+        return switch (this.code) {
+            case "001" -> "휴대폰 소액결제";
+            case "002" -> "신용카드 결제";
+            case "003" -> "실시간 계좌이체";
+            case "004" -> "가상계좌";
+            case "005" -> "간편";
+            case "006" -> "카카오페이";
+            case "007" -> "네이버페이";
+            case "999" -> "기타";
+            default -> "";
+        };
+    }
 }

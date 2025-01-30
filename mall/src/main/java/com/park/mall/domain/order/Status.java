@@ -34,7 +34,7 @@ public enum Status {
             case "003" -> "배송중";
             case "004" -> "배송완료";
             case "005" -> "구매확정";
-            case "010" -> "취소";
+            case "010" -> "주문취소";
             default -> "";
         };
     }

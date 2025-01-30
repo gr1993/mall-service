@@ -7,15 +7,13 @@ import com.park.mall.domain.order.Orders;
 import com.park.mall.domain.order.PayType;
 import com.park.mall.domain.order.Status;
 import com.park.mall.domain.product.Product;
+import com.park.mall.domain.product.ProductImg;
 import com.park.mall.repository.member.MemberJpaRepository;
 import com.park.mall.repository.order.OrderSearchCondition;
 import com.park.mall.repository.order.OrdersJpaRepository;
 import com.park.mall.repository.order.OrdersQueryRepository;
 import com.park.mall.repository.product.ProductJpaRepository;
-import com.park.mall.service.order.dto.CartItem;
-import com.park.mall.service.order.dto.OrderDetailInfo;
-import com.park.mall.service.order.dto.OrderInfo;
-import com.park.mall.service.order.dto.OrderRequest;
+import com.park.mall.service.order.dto.*;
 import com.park.mall.service.payment.BootpayService;
 import com.park.mall.service.payment.BootpayStatus;
 import com.park.mall.service.payment.dto.ReceiptInfo;
@@ -96,6 +94,36 @@ public class OrderService {
 
         bootpayService.cancel(orders.getReceiptId());
         orders.setStatus(Status.CANCEL);
+    }
+
+    public AdminOrderDetail getAdminOrderDetail(String orderId) {
+        Orders orders = ordersJpaRepository.findById(orderId).orElseThrow();
+        List<OrderDetails> orderDetailsList = orders.getOrderDetails();
+
+        AdminOrderDetail adminOrderDetail = new AdminOrderDetail();
+        adminOrderDetail.setId(orderId);
+        adminOrderDetail.setMemberId(orders.getMember().getId());
+        adminOrderDetail.setAddress(orders.getAddress());
+        adminOrderDetail.setStatus(orders.getStatus().getCode());
+        adminOrderDetail.setStatusText(orders.getStatus().getCodeText());
+        adminOrderDetail.setPayType(orders.getPayType().getCode());
+        adminOrderDetail.setPayTypeText(orders.getPayType().getCodeText());
+        adminOrderDetail.setPayAmount(orders.getPayAmount());
+        adminOrderDetail.setPayDate(orders.getPayDate());
+
+        for (OrderDetails orderDetails : orderDetailsList) {
+            OrderDetailInfo orderDetailInfo = new OrderDetailInfo();
+            orderDetailInfo.setProductId(orderDetails.getProduct().getId());
+            orderDetailInfo.setProductName(orderDetails.getProductName());
+            orderDetailInfo.setPrice(orderDetails.getPrice());
+            orderDetailInfo.setQuantity(orderDetails.getQuantity());
+
+            ProductImg productImg = orderDetails.getProduct().getProductImgs().get(0);
+            orderDetailInfo.setMainImgPath(productImg.getMainImgPath());
+            adminOrderDetail.getOrderDetailInfos().add(orderDetailInfo);
+        }
+
+        return adminOrderDetail;
     }
 
     private Map<String, Object> getResultData(OrderSearchCondition condition, Pageable pageable) {
