@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.park'
@@ -11,6 +12,10 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
+}
+
+jacoco {
+	toolVersion = '0.8.8'
 }
 
 repositories {
@@ -51,8 +56,34 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+	finalizedBy jacocoTestReport
 }
 
 clean {
 	delete file('src/main/generated')
+}
+
+jacocoTestReport {
+	dependsOn test
+
+	reports {
+		html.required = true
+		xml.required = false
+		csv.required = false
+	}
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			enabled = true
+			element = 'PACKAGE'
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.00
+			}
+		}
+	}
 }
