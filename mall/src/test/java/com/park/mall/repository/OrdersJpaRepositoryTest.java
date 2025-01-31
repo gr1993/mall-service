@@ -10,7 +10,9 @@ import com.park.mall.domain.order.Status;
 import com.park.mall.domain.product.Product;
 import com.park.mall.repository.member.MemberJpaRepository;
 import com.park.mall.repository.order.OrdersJpaRepository;
+import com.park.mall.repository.order.dto.OrderCountStatistics;
 import com.park.mall.repository.product.ProductJpaRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OrdersJpaRepositoryTest {
@@ -57,33 +60,35 @@ public class OrdersJpaRepositoryTest {
     }
 
     @BeforeEach
-    public void setup() {
-        orders = new Orders();
-        orders.setId(IdUtil.generateOrderId());
-        orders.setMember(member);
-        orders.setAddress("서울시 구로구 디지털로 00길 00");
-        orders.setStatus(Status.PREPARE);
-        orders.setPayType(PayType.CARD);
-        orders.setPayAmount(10000);
-        orders.setPayDate(LocalDateTime.now());
-        orders.setCancelYn(CodeYn.N);
-        orders.setReceiptId("abcd123");
+    public void setup(TestInfo testInfo) {
+        if (!testInfo.getTags().contains("skipBeforeEach")) {
+            orders = new Orders();
+            orders.setId(IdUtil.generateOrderId());
+            orders.setMember(member);
+            orders.setAddress("서울시 구로구 디지털로 00길 00");
+            orders.setStatus(Status.PREPARE);
+            orders.setPayType(PayType.CARD);
+            orders.setPayAmount(10000);
+            orders.setPayDate(LocalDateTime.now());
+            orders.setCancelYn(CodeYn.N);
+            orders.setReceiptId("abcd123");
 
-        OrderDetails orderDetails1 = new OrderDetails();
-        orderDetails1.setOrders(orders);
-        orderDetails1.setProduct(productList.get(0));
-        orderDetails1.setProductName(productList.get(0).getName());
-        orderDetails1.setPrice(productList.get(0).getPrice());
-        orderDetails1.setQuantity(1);
+            OrderDetails orderDetails1 = new OrderDetails();
+            orderDetails1.setOrders(orders);
+            orderDetails1.setProduct(productList.get(0));
+            orderDetails1.setProductName(productList.get(0).getName());
+            orderDetails1.setPrice(productList.get(0).getPrice());
+            orderDetails1.setQuantity(1);
 
-        OrderDetails orderDetails2 = new OrderDetails();
-        orderDetails2.setOrders(orders);
-        orderDetails2.setProduct(productList.get(1));
-        orderDetails2.setProductName(productList.get(1).getName());
-        orderDetails2.setPrice(productList.get(1).getPrice());
-        orderDetails2.setQuantity(2);
-        orders.getOrderDetails().add(orderDetails1);
-        orders.getOrderDetails().add(orderDetails2);
+            OrderDetails orderDetails2 = new OrderDetails();
+            orderDetails2.setOrders(orders);
+            orderDetails2.setProduct(productList.get(1));
+            orderDetails2.setProductName(productList.get(1).getName());
+            orderDetails2.setPrice(productList.get(1).getPrice());
+            orderDetails2.setQuantity(2);
+            orders.getOrderDetails().add(orderDetails1);
+            orders.getOrderDetails().add(orderDetails2);
+        }
     }
 
     @Test
@@ -119,9 +124,43 @@ public class OrdersJpaRepositoryTest {
         assertEqualsOrders(orders, srchOrders);
     }
 
+    @Test
+    @Tag("skipBeforeEach")
+    void getOrderCountForDay() {
+        //given
+        List<Orders> ordersList = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Orders newOrders = new Orders();
+            newOrders.setId(IdUtil.generateOrderId() + i);
+            newOrders.setStatus(Status.PAYMENT);
+            newOrders.setMember(member);
+            newOrders.setReceiptId("A");
+            newOrders.setPayDate(LocalDateTime.of(2020, 1, 1 + i, 0, 0));
+
+            ordersList.add(newOrders);
+        }
+        ordersJpaRepository.saveAll(ordersList);
+
+        LocalDateTime startDate = LocalDateTime.of(2020, 1, 1, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2020, 1, 10, 0, 0);
+
+        //when
+        List<OrderCountStatistics> orderCountStatisticsList = ordersJpaRepository.getOrderCountForDay(startDate, endDate, Status.PAYMENT.getCode(), null);
+
+        //then
+        Assertions.assertEquals(4, orderCountStatisticsList.size());
+        Assertions.assertEquals("2020-01-01", orderCountStatisticsList.get(0).getOrderDate());
+        Assertions.assertEquals("2020-01-02", orderCountStatisticsList.get(1).getOrderDate());
+        Assertions.assertEquals("2020-01-03", orderCountStatisticsList.get(2).getOrderDate());
+        Assertions.assertEquals("2020-01-04", orderCountStatisticsList.get(3).getOrderDate());
+        ordersJpaRepository.deleteAll(ordersList);
+    }
+
     @AfterEach
-    public void clear() {
-        ordersJpaRepository.deleteById(orders.getId());
+    public void clear(TestInfo testInfo) {
+        if (!testInfo.getTags().contains("skipBeforeEach")) {
+            ordersJpaRepository.deleteById(orders.getId());
+        }
     }
 
     @AfterAll
