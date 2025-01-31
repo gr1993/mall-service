@@ -1,6 +1,7 @@
 package com.park.mall.web.admin.order;
 
 import com.park.mall.repository.order.dto.OrderSearchCondition;
+import com.park.mall.repository.order.dto.ProductCountStatistics;
 import com.park.mall.service.order.OrderService;
 import com.park.mall.service.order.dto.AdminOrderDetail;
 import com.park.mall.service.order.dto.AdminOrderStat;
@@ -57,5 +58,11 @@ public class OrderController {
     @ResponseBody
     public List<AdminOrderStat> orderCountStat() {
         return orderService.getOrderCountForDay();
+    }
+
+    @GetMapping("/order/product/stat")
+    @ResponseBody
+    public List<ProductCountStatistics> orderProductStat() {
+        return orderService.getOrderProductStat();
     }
 }

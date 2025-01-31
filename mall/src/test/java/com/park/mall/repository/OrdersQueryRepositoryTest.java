@@ -13,6 +13,7 @@ import com.park.mall.repository.member.MemberJpaRepository;
 import com.park.mall.repository.order.dto.OrderSearchCondition;
 import com.park.mall.repository.order.OrdersJpaRepository;
 import com.park.mall.repository.order.OrdersQueryRepository;
+import com.park.mall.repository.order.dto.ProductCountStatistics;
 import com.park.mall.repository.product.ProductJpaRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +133,16 @@ public class OrdersQueryRepositoryTest {
 
         ProductImg productImg = orderDetails.getProduct().getProductImgs().get(0);
         Assertions.assertNotNull(productImg);
+    }
+
+    @Test
+    @Transactional
+    void getOrderProductStat() {
+        //when
+        List<ProductCountStatistics> orderProductStatList = ordersQueryRepository.getOrderProductStat();
+
+        //then
+        Assertions.assertFalse(orderProductStatList.isEmpty());
     }
 
     @AfterEach

@@ -114,6 +114,7 @@
 
                 $(function() {
                     loadLineChart();
+                    loadBarChart();
                 });
 
                 function loadLineChart() {
@@ -123,8 +124,8 @@
                             const statData = await response.json();
 
                             const orderDateList = statData.map(s => s.orderDate);
-                            const orderDateCount = statData.map(s => s.orderCount);
-                            const maxCount = Math.max.apply(null, orderDateCount);
+                            const orderCountList = statData.map(s => s.orderCount);
+                            const maxCount = Math.max.apply(null, orderCountList);
                             const correction = 5 - maxCount % 5; // 5단위 보정 값
 
                             var ctx = document.getElementById("myAreaChart");
@@ -144,7 +145,7 @@
                                   pointHoverBackgroundColor: "rgba(2,117,216,1)",
                                   pointHitRadius: 50,
                                   pointBorderWidth: 2,
-                                  data: orderDateCount,
+                                  data: orderCountList,
                                 }],
                               },
                               options: {
@@ -182,8 +183,66 @@
                         }
                     });
                 }
+
+                function loadBarChart() {
+                    fetchGet({
+                        url: '/admin/order/product/stat',
+                        success: async function(response) {
+                            const statData = await response.json();
+
+                            const productNameList = statData.map(s => s.productName);
+                            const orderCountList = statData.map(s => s.orderCount);
+                            const maxCount = Math.max.apply(null, orderCountList);
+                            const correction = 5 - maxCount % 5; // 5단위 보정 값
+
+                            var ctx = document.getElementById("myBarChart");
+                            var myLineChart = new Chart(ctx, {
+                              type: 'bar',
+                              data: {
+                                labels: productNameList,
+                                datasets: [{
+                                  label: "Revenue",
+                                  backgroundColor: "rgba(2,117,216,1)",
+                                  borderColor: "rgba(2,117,216,1)",
+                                  data: orderCountList,
+                                }],
+                              },
+                              options: {
+                                scales: {
+                                  xAxes: [{
+                                    time: {
+                                      unit: 'month'
+                                    },
+                                    gridLines: {
+                                      display: false
+                                    },
+                                    ticks: {
+                                      maxTicksLimit: 6
+                                    }
+                                  }],
+                                  yAxes: [{
+                                    ticks: {
+                                      min: 0,
+                                      max: maxCount + correction,
+                                      maxTicksLimit: 5
+                                    },
+                                    gridLines: {
+                                      display: true
+                                    }
+                                  }],
+                                },
+                                legend: {
+                                  display: false
+                                }
+                              }
+                            });
+                        },
+                        fail: async function(response) {
+
+                        }
+                    });
+                }
             </script>
-            <script src="/js/chart-bar-demo.js"></script>
 
             <script src="/js/datatables-simple-demo.js"></script>
         </main>

@@ -13,6 +13,7 @@ import com.park.mall.repository.order.dto.OrderCountStatistics;
 import com.park.mall.repository.order.dto.OrderSearchCondition;
 import com.park.mall.repository.order.OrdersJpaRepository;
 import com.park.mall.repository.order.OrdersQueryRepository;
+import com.park.mall.repository.order.dto.ProductCountStatistics;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.service.order.dto.*;
 import com.park.mall.service.payment.BootpayService;
@@ -156,6 +157,10 @@ public class OrderService {
             }
         }
         return adminOrderStatList;
+    }
+
+    public List<ProductCountStatistics> getOrderProductStat() {
+        return ordersQueryRepository.getOrderProductStat();
     }
 
 

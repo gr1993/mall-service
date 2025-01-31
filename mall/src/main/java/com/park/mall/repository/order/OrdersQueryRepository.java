@@ -2,9 +2,11 @@ package com.park.mall.repository.order;
 
 import com.park.mall.domain.order.Orders;
 import com.park.mall.repository.order.dto.OrderSearchCondition;
+import com.park.mall.repository.order.dto.ProductCountStatistics;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 import static com.park.mall.domain.order.QOrders.orders;
 import static com.park.mall.domain.order.QOrderDetails.orderDetails;
@@ -73,6 +77,21 @@ public class OrdersQueryRepository {
                 );
 
         return PageableExecutionUtils.getPage(fetchQuery.fetch(), pageable, count::fetchOne);
+    }
+
+    public List<ProductCountStatistics> getOrderProductStat() {
+        return query
+                .select(Projections.constructor(
+                        ProductCountStatistics.class,
+                        product.name,
+                        product.count()
+                ))
+                .from(orders)
+                .leftJoin(orders.orderDetails, orderDetails)
+                .leftJoin(orderDetails.product, product)
+                .groupBy(product.id, product.name)
+                .orderBy(product.count().desc())
+                .fetch();
     }
 
     private BooleanExpression[] conditions (OrderSearchCondition condition) {

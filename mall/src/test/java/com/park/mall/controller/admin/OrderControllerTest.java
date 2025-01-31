@@ -78,4 +78,17 @@ public class OrderControllerTest {
                 .andDo(print())
                 .andReturn();
     }
+
+    @Test
+    @WithMockUser(roles = "admin")
+    void orderProductStat() throws Exception {
+        //when
+        ResultActions mvcAction = mockMvc.perform(get("/admin/order/product/stat"));
+
+        //then
+        mvcAction
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+    }
 }
