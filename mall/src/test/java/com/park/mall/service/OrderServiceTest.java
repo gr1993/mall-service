@@ -326,7 +326,7 @@ public class OrderServiceTest {
         Orders orders = new Orders();
         orders.setMember(member);
         orders.setStatus(Status.PAYMENT);
-        orders.setPayType(PayType.CARD);
+        orders.setPayType(PayType.KAKAOPAY);
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setProduct(productList.get(0));
         orders.getOrderDetails().add(orderDetails);

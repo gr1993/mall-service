@@ -1,6 +1,7 @@
 package com.park.mall.repository.order;
 
 import com.park.mall.domain.order.Orders;
+import com.park.mall.repository.order.dto.OrderSearchCondition;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
@@ -19,7 +20,6 @@ import static com.park.mall.domain.order.QOrders.orders;
 import static com.park.mall.domain.order.QOrderDetails.orderDetails;
 import static com.park.mall.domain.member.QMember.member;
 import static com.park.mall.domain.product.QProduct.product;
-import static com.park.mall.domain.product.QProductImg.productImg;
 
 @Repository
 public class OrdersQueryRepository {

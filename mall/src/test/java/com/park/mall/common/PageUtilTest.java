@@ -45,4 +45,24 @@ public class PageUtilTest {
         Assertions.assertEquals(3, pageInfo.getFirstPage());
         Assertions.assertEquals(7, pageInfo.getLastPage());
     }
+
+    @Test
+    public void getPageInfoTotalNineForMin() {
+        //when
+        PageInfo pageInfo = PageUtil.getPageInfo(9, 1);
+
+        //then
+        Assertions.assertEquals(1, pageInfo.getFirstPage());
+        Assertions.assertEquals(5, pageInfo.getLastPage());
+    }
+
+    @Test
+    public void getPageInfoTotalNineForMax() {
+        //when
+        PageInfo pageInfo = PageUtil.getPageInfo(9, 9);
+
+        //then
+        Assertions.assertEquals(5, pageInfo.getFirstPage());
+        Assertions.assertEquals(9, pageInfo.getLastPage());
+    }
 }

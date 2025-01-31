@@ -72,18 +72,55 @@ jacocoTestReport {
 		xml.required = false
 		csv.required = false
 	}
+
+	def Qdomains = []
+	for (qPattern in '**/QA'..'**/QZ') {
+		Qdomains.add(qPattern + '*')
+	}
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					'**/*Application*',
+					'**/dto/**',
+					'**/exception/**',
+					'**/config/**',
+					'**/security/**',
+					'**/admin/common/**',
+					'**/domain/order/**'
+			] + Qdomains)
+		}))
+	}
+
+	// 리포트 생성 후 커버리지 체크
+	finalizedBy jacocoTestCoverageVerification
 }
 
 jacocoTestCoverageVerification {
+	def Qdomains = []
+	for (qPattern in '*.QA'..'*.QZ') {
+		Qdomains.add(qPattern + '*')
+	}
+
 	violationRules {
 		rule {
 			enabled = true
-			element = 'PACKAGE'
+			element = 'CLASS'
+
 			limit {
 				counter = 'LINE'
 				value = 'COVEREDRATIO'
-				minimum = 0.00
+				minimum = 0.70
 			}
+
+			excludes = [
+					'**.*Application*',
+					'**.dto.**',
+					'**.exception.**',
+					'**.config.**',
+					'**.security.**',
+					'**.admin.common.**',
+					'**.domain.order.**'
+			] + Qdomains
 		}
 	}
 }

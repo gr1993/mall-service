@@ -1,6 +1,6 @@
 package com.park.mall.web.admin.order;
 
-import com.park.mall.repository.order.OrderSearchCondition;
+import com.park.mall.repository.order.dto.OrderSearchCondition;
 import com.park.mall.service.order.OrderService;
 import com.park.mall.service.order.dto.AdminOrderDetail;
 import com.park.mall.web.admin.common.GridJsInfo;

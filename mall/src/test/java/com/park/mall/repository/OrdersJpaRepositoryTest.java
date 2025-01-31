@@ -105,7 +105,7 @@ public class OrdersJpaRepositoryTest {
         orders = ordersJpaRepository.findByIdWithOrderDetails(orders.getId()).orElseThrow();
         orders.setAddress("주소 변경");
         orders.setStatus(Status.CANCEL);
-        orders.setPayType(PayType.CARD);
+        orders.setPayType(PayType.NAVERPAY);
         orders.setPayAmount(20000);
         orders.setCancelYn(CodeYn.Y);
 

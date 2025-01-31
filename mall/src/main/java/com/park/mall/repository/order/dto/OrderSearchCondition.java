@@ -1,4 +1,4 @@
-package com.park.mall.repository.order;
+package com.park.mall.repository.order.dto;
 
 import lombok.Getter;
 import lombok.Setter;

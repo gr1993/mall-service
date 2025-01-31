@@ -9,7 +9,7 @@ import com.park.mall.domain.order.Status;
 import com.park.mall.domain.product.Product;
 import com.park.mall.domain.product.ProductImg;
 import com.park.mall.repository.member.MemberJpaRepository;
-import com.park.mall.repository.order.OrderSearchCondition;
+import com.park.mall.repository.order.dto.OrderSearchCondition;
 import com.park.mall.repository.order.OrdersJpaRepository;
 import com.park.mall.repository.order.OrdersQueryRepository;
 import com.park.mall.repository.product.ProductJpaRepository;
