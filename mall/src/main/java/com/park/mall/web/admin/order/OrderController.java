@@ -3,6 +3,7 @@ package com.park.mall.web.admin.order;
 import com.park.mall.repository.order.dto.OrderSearchCondition;
 import com.park.mall.service.order.OrderService;
 import com.park.mall.service.order.dto.AdminOrderDetail;
+import com.park.mall.service.order.dto.AdminOrderStat;
 import com.park.mall.web.admin.common.GridJsInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,5 +51,11 @@ public class OrderController {
             @PathVariable(value = "id") String id
     ) {
         return orderService.getAdminOrderDetail(id);
+    }
+
+    @GetMapping("/order/count/stat")
+    @ResponseBody
+    public List<AdminOrderStat> orderCountStat() {
+        return orderService.getOrderCountForDay();
     }
 }
