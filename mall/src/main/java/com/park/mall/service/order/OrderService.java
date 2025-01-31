@@ -9,6 +9,7 @@ import com.park.mall.domain.order.Status;
 import com.park.mall.domain.product.Product;
 import com.park.mall.domain.product.ProductImg;
 import com.park.mall.repository.member.MemberJpaRepository;
+import com.park.mall.repository.order.dto.OrderCountStatistics;
 import com.park.mall.repository.order.dto.OrderSearchCondition;
 import com.park.mall.repository.order.OrdersJpaRepository;
 import com.park.mall.repository.order.OrdersQueryRepository;
@@ -17,6 +18,7 @@ import com.park.mall.service.order.dto.*;
 import com.park.mall.service.payment.BootpayService;
 import com.park.mall.service.payment.BootpayStatus;
 import com.park.mall.service.payment.dto.ReceiptInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,12 +29,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
+@Slf4j
 @Service
 @Transactional
 public class OrderService {
@@ -125,6 +127,37 @@ public class OrderService {
 
         return adminOrderDetail;
     }
+
+    /**
+     * 최근 일주일 주문 수 통계 쿼리
+     */
+    public List<AdminOrderStat> getOrderCountForDay() {
+        List<OrderCountStatistics> orderInfoList = ordersJpaRepository.getOrderCountForDay(
+                LocalDateTime.now().minusDays(8),
+                LocalDateTime.now(),
+                Status.CONFIRM.getCode(),
+                null
+        );
+
+        List<AdminOrderStat> adminOrderStatList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = today.minusDays(i);
+            String dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            Optional<OrderCountStatistics> oOrderInfo = orderInfoList.stream()
+                    .filter(o -> dateStr.equals(o.getOrderDate()))
+                    .findAny();
+
+            if (oOrderInfo.isEmpty()) {
+                adminOrderStatList.add(new AdminOrderStat(dateStr, 0));
+            } else {
+                adminOrderStatList.add(new AdminOrderStat(dateStr, oOrderInfo.get().getOrderCount()));
+            }
+        }
+        return adminOrderStatList;
+    }
+
 
     private Map<String, Object> getResultData(OrderSearchCondition condition, Pageable pageable) {
         Page<Orders> page = ordersQueryRepository.searchPage(condition, pageable);

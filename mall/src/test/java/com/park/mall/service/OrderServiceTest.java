@@ -12,13 +12,11 @@ import com.park.mall.domain.product.ProductImg;
 import com.park.mall.repository.member.MemberJpaRepository;
 import com.park.mall.repository.order.OrdersJpaRepository;
 import com.park.mall.repository.order.OrdersQueryRepository;
+import com.park.mall.repository.order.dto.OrderCountStatistics;
 import com.park.mall.repository.product.ProductJpaRepository;
 import com.park.mall.security.MemberUserDetails;
 import com.park.mall.service.order.OrderService;
-import com.park.mall.service.order.dto.AdminOrderDetail;
-import com.park.mall.service.order.dto.CartItem;
-import com.park.mall.service.order.dto.OrderInfo;
-import com.park.mall.service.order.dto.OrderRequest;
+import com.park.mall.service.order.dto.*;
 import com.park.mall.service.payment.BootpayService;
 import com.park.mall.service.payment.BootpayStatus;
 import com.park.mall.service.payment.dto.ReceiptInfo;
@@ -37,7 +35,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -340,5 +340,42 @@ public class OrderServiceTest {
         //then
         Assertions.assertNotNull(adminOrderDetail);
         Assertions.assertEquals(1, adminOrderDetail.getOrderDetailInfos().size());
+    }
+
+    @Test
+    void getOrderCountForDay() {
+        //given
+        List<OrderCountStatistics> orderInfoList = new ArrayList<>();
+        orderInfoList.add(getOrderCountStatistics(4, LocalDate.now().minusDays(4)));
+        orderInfoList.add(getOrderCountStatistics(2, LocalDate.now().minusDays(2)));
+        Mockito.when(ordersJpaRepository.getOrderCountForDay(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(orderInfoList);
+
+        //when
+        List<AdminOrderStat> adminOrderStatList = orderService.getOrderCountForDay();
+
+        //then
+        Assertions.assertEquals(7, adminOrderStatList.size());
+        Assertions.assertEquals(0, adminOrderStatList.get(0).getOrderCount());
+        Assertions.assertEquals(0, adminOrderStatList.get(1).getOrderCount());
+        Assertions.assertEquals(2, adminOrderStatList.get(2).getOrderCount());
+        Assertions.assertEquals(0, adminOrderStatList.get(3).getOrderCount());
+        Assertions.assertEquals(4, adminOrderStatList.get(4).getOrderCount());
+        Assertions.assertEquals(0, adminOrderStatList.get(5).getOrderCount());
+        Assertions.assertEquals(0, adminOrderStatList.get(6).getOrderCount());
+    }
+
+    private OrderCountStatistics getOrderCountStatistics(int count, LocalDate date) {
+        return new OrderCountStatistics() {
+            @Override
+            public int getOrderCount() {
+                return count;
+            }
+
+            @Override
+            public String getOrderDate() {
+                return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            }
+        };
     }
 }
