@@ -40,8 +40,11 @@ Spring Boot 기술들을 학습하기 위해 만들었으며 온라인 쇼핑몰
 
 ## 시연 영상
 
-### [관리자 시연 유튜브](https://www.youtube.com/watch?v=DZfCUBZA4yg)
+### 관리자 페이지 시연 : [유튜브로 이동](https://www.youtube.com/watch?v=DZfCUBZA4yg)
 ![admin image](./capture/admin.gif)
+
+### 박신사몰 시연 : [유튜브로 이동](https://www.youtube.com/watch?v=PuNURSUJPXw)
+![mall image](./capture/mall.gif)
 
 ## ERD
 
