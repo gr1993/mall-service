@@ -7,8 +7,8 @@ Spring Boot 기술들을 학습하기 위해 만들었으며 온라인 쇼핑몰
 ## 백엔드 기술
 
 * Spring Boot 3.4.1 (JDK 17)
-* Spring Security
-* JPA + Querydsl
+* Spring Security : Session 방식 인증이며 관리자와 쇼핑몰 인증 분리 구현
+* JPA + Querydsl + Native Query 등 데이터 접근 기술 사용
 * mysql connector
 * Thymeleaf
 * Jasypt : 설정 파일 보안 적용 (jasyptKey : mypasswordkey)
@@ -27,6 +27,8 @@ Spring Boot 기술들을 학습하기 위해 만들었으며 온라인 쇼핑몰
 	* jqGrid
 	* Grid.js
 * Chart.js
+	* Line Chart
+	* Bar Chart
 
 ## 결제 모듈
 
@@ -38,6 +40,8 @@ Spring Boot 기술들을 학습하기 위해 만들었으며 온라인 쇼핑몰
 
 ## 시연 영상
 
+### [관리자 시연 유튜브](https://www.youtube.com/watch?v=DZfCUBZA4yg)
+![admin image](./capture/admin.gif)
 
 ## ERD
 
@@ -46,7 +50,7 @@ Spring Boot 기술들을 학습하기 위해 만들었으며 온라인 쇼핑몰
 ## 테스트 커버리지
 
 ![TEST](./capture/test-coverage.png)
-* 라인 커버리지 테스트 통과 기준 : 70%
+* 라인 커버리지 테스트 통과 기준 : CLASS 단위 검사, 70%
 * 전체 라인 커버리지 91% (48 / 596)
 
 ## 템플릿 참조
